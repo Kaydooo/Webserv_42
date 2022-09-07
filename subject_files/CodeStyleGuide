@@ -1,0 +1,28 @@
+here we need to write our rules for writing code. 
+something like a norminet for the project
+
+1. all structures and functions are preceded by comments of the format /* bla-bla */ 
+   briefly describing what is happening below.
+
+2. Class name format: 
+   class HttpRequest {
+
+   };
+
+3. Functions name format: 
+   countingVariable()
+
+   bool isDigits(std::string const &str) {
+	   return (str.find_first_not_of("0123456789") == std::string::npos);
+   }
+
+4. Structures name format:
+   typedef struct  s_error {
+      ...
+   }               t_error;
+
+5. Variables name format: 
+   - private or protected: _server
+   - public: server
+
+6. names of structures, variables and functions should reflect the meaning of their content, avoid abbreviations
