@@ -10,6 +10,7 @@ class Server
         ~Server();
 
         void    run();
+        int     getFd();
 
     private:
         int     _port;
