@@ -27,10 +27,10 @@ class RequestHandler
         std::string _response_content;
         std::string _response_body;
 
-        void    buildBody();
+        int    buildBody();
         void    addStatus();
         void    addHeaders();
-        void    readFile();
+        int    readFile();
         // void    tokenize(std::string&, std::string&, std::string del = "\n");
 
 };

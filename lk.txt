@@ -1,0 +1,36 @@
+==27994== Memcheck, a memory error detector
+==27994== Copyright (C) 2002-2017, and GNU GPL'd, by Julian Seward et al.
+==27994== Using Valgrind-3.16.1 and LibVEX; rerun with -h for copyright info
+==27994== Command: ./webserv 22
+==27994== Parent PID: 310
+==27994== 
+==27994== 
+==27994== Process terminating with default action of signal 2 (SIGINT)
+==27994==    at 0x4B28866: select (select.c:41)
+==27994==    by 0x10A7A4: ServerManager::runServers() (ServerManager.cpp:21)
+==27994==    by 0x10A533: main (main.cpp:14)
+==27994== 
+==27994== HEAP SUMMARY:
+==27994==     in use at exit: 2,926,855 bytes in 14 blocks
+==27994==   total heap usage: 174 allocs, 160 frees, 3,039,778 bytes allocated
+==27994== 
+==27994== 2,926,455 bytes in 12 blocks are definitely lost in loss record 3 of 3
+==27994==    at 0x483AB65: calloc (in /usr/lib/x86_64-linux-gnu/valgrind/vgpreload_memcheck-amd64-linux.so)
+==27994==    by 0x10D904: RequestHandler::readFile() (RequestHandler.cpp:101)
+==27994==    by 0x10D8A1: RequestHandler::buildBody() (RequestHandler.cpp:93)
+==27994==    by 0x10D6CD: RequestHandler::buildResponse() (RequestHandler.cpp:53)
+==27994==    by 0x10AF74: ServerManager::handle_request(int&, int&) (ServerManager.cpp:132)
+==27994==    by 0x10A897: ServerManager::runServers() (ServerManager.cpp:32)
+==27994==    by 0x10A533: main (main.cpp:14)
+==27994== 
+==27994== LEAK SUMMARY:
+==27994==    definitely lost: 2,926,455 bytes in 12 blocks
+==27994==    indirectly lost: 0 bytes in 0 blocks
+==27994==      possibly lost: 0 bytes in 0 blocks
+==27994==    still reachable: 400 bytes in 2 blocks
+==27994==         suppressed: 0 bytes in 0 blocks
+==27994== Reachable blocks (those to which a pointer was found) are not shown.
+==27994== To see them, rerun with: --leak-check=full --show-leak-kinds=all
+==27994== 
+==27994== For lists of detected and suppressed errors, rerun with: -s
+==27994== ERROR SUMMARY: 1 errors from 1 contexts (suppressed: 0 from 0)

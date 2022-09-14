@@ -20,26 +20,24 @@ void    ServerManager::runServers()
         pool_cpy = _recv_fd_pool;
         if( select(FD_SETSIZE, &pool_cpy, NULL, NULL, NULL) < 0 )
         {
-            std::cerr << " webserv: select error" << strerror(errno) <<std::endl;
+            std::cerr << " webserv: select error " << strerror(errno) <<std::endl;
             exit(EXIT_FAILURE);
         }
 
-            for (int i = 0; i < FD_SETSIZE; ++i)
+        for (int i = 0; i < FD_SETSIZE; ++i)
+        {
+            if(FD_ISSET(i, &pool_cpy))
             {
-                if(FD_ISSET(i, &pool_cpy))
-                {
-                    if(!checkServer(i))
-                    {
-                        handle_request(i, set_size);
-                    }
-                    else
-                        set_size++;
-                }
+                if(!checkServer(i))
+                    handle_request(i, set_size);
+                else
+                    set_size++;
             }
+        }
     }
-    std::vector<Server>::iterator it;
-    for(it = _servers.begin(); it != _servers.end(); ++it)
-        it->run();
+    // std::vector<Server>::iterator it;
+    // for(it = _servers.begin(); it != _servers.end(); ++it)
+    //     it->run();
 }
 
 
@@ -65,8 +63,8 @@ void    ServerManager::acceptNewConnection(Server &serv)
     }
     new_client.setSocket(client_sock);
     _clients.push_back(new_client);
+    std::cout << "New Connection with: " << inet_ntoa(new_client.getAddress().sin_addr) << std::endl;
     // new_client.setAddress(client_address);
-
 }
 
 void    ServerManager::setupSelect(int &set_size)
@@ -112,13 +110,18 @@ void    ServerManager::handle_request(int &i, int &set_size)
     int     client_index = 0;
     std::string request_content;
     std::string        response_content;
+
     if(client_index)
     {}
+
     for(size_t j = 0; j < _clients.size(); ++j)
     {
         if(_clients[j].getSocket() == i)
             client_index = j;
     }
+
+    std::cout << "Message from: " << inet_ntoa(_clients[client_index].getAddress().sin_addr) << std::endl;
+
     bytes_read = read(i, buffer, sizeof(buffer));
     buffer[bytes_read] = '\0';
     request_content.append(buffer);
@@ -129,14 +132,12 @@ void    ServerManager::handle_request(int &i, int &set_size)
         exit(EXIT_FAILURE);
     }
     RequestHandler request(request_content);
-    std::cout << request_content << std::endl;
     request_content.clear();
     request.buildResponse();
     response_content = request.getContent();
     send(i, response_content.c_str(), strlen(response_content.c_str()), 0);
     send(i, request.getBody(), request.getBodyLength(), 0);
-
     FD_CLR(i, &_recv_fd_pool);
     set_size--;
-    close(1);
+    close(i);
 }

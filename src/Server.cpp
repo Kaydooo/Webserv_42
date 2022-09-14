@@ -15,7 +15,6 @@ Server::Server(): _port(TEST_PORT)
     setsockopt(_listen_fd, SOL_SOCKET, SO_REUSEADDR, &option_value, sizeof(int));
     
     memset(&_server_address, 0, sizeof(_server_address));
-    memset(&_client_address, 0, sizeof(_client_address));
 
     _server_address.sin_family = AF_INET;
     _server_address.sin_addr.s_addr = htonl(INADDR_ANY);

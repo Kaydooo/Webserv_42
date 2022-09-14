@@ -50,9 +50,11 @@ void    RequestHandler::addHeaders()
 void    RequestHandler::buildResponse()
 {
 
-    buildBody();
-    addStatus();
-    addHeaders();
+    if(buildBody())
+    {   
+        addStatus();
+        addHeaders();
+    }
 
     // Temp for testing only
 
@@ -79,7 +81,8 @@ size_t file_size(std::string file_path)
     if (fin == NULL) {
         std::cerr << " webserv: open error 1" << strerror(errno) << std::endl;
         std::cerr << file_path << std::endl;
-        exit(0);
+        return (-1);
+        // exit(0);
     }
 
     fseek(fin, 0L, SEEK_END);
@@ -88,16 +91,23 @@ size_t file_size(std::string file_path)
     return size;
 }
 
-void    RequestHandler::buildBody()
+int    RequestHandler::buildBody()
 {
-    readFile();
+    if(!readFile())
+    {
+        std::cout << "readFile Fail !" << std::endl;
+        return (0);
+    }
+    return (1);
 }
-void     RequestHandler::readFile()
+int     RequestHandler::readFile()
 {
     int         file_fd;
     int         bytes_read;
 
     _body_length = file_size(_request_line[1]);
+    if(_body_length == -1)
+        return (0);
     _request_body = (char*) calloc(sizeof(char), _body_length);
 
     if (_request_line[1].compare("/") == 0)
@@ -109,7 +119,7 @@ void     RequestHandler::readFile()
     {
         std::cerr << " webserv: open error " << strerror(errno) << std::endl;
         // exit(EXIT_FAILURE);
-        return ; 
+        return 0; 
     }
 
     bytes_read = read(file_fd, _request_body, _body_length);
@@ -117,6 +127,8 @@ void     RequestHandler::readFile()
     {
         std::cout << "read erro in file :|" << _request_line[1] << "|" << std::endl;
         std::cerr << " webserv: read error *_*" << strerror(errno) << std::endl;
-        exit(EXIT_FAILURE);
+        // exit(EXIT_FAILURE);
+        return (0);
     }
+    return (1);
 }
