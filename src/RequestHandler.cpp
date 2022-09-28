@@ -55,9 +55,7 @@ void    RequestHandler::buildResponse()
         addStatus();
         addHeaders();
     }
-
     // Temp for testing only
-
 }
 
 std::string RequestHandler::getContent() { return _response_content; }
@@ -100,6 +98,7 @@ int    RequestHandler::buildBody()
     }
     return (1);
 }
+
 int     RequestHandler::readFile()
 {
     int         file_fd;

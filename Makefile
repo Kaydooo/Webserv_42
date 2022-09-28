@@ -23,7 +23,7 @@ $(NAME) : $(OBJS) $(HEADERS)
 	@echo $(BLACK)-webserv compiled 🌐 $(RESET)
 
 clean:
-	$(RM) $(OBJS)	
+	$(RM) $(OBJS)
 
 fclean: clean
 	$(RM) $(NAME)

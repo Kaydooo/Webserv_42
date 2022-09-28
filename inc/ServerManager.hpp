@@ -23,13 +23,16 @@ class ServerManager
         _clients: store info about all conncted clients. Socket number, address port, connected server ..
         */
         server_vec _servers;
+        std::map<int, Server> _servers_map;
         client_vec _clients;
+        std::map<int, Client> _clients_map;
         fd_set     _recv_fd_pool;
+        int        _biggest_fd;
 
         void acceptNewConnection(Server &);
-        void setupSelect(int &);
-        void handle_request(int &, int &set_size);
-        int  checkServer(int &);
+        void setupSelect();
+        void handle_request(int &);
+        // int  checkServer(int &);
 
 };
 

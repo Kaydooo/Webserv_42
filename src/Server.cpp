@@ -23,7 +23,7 @@ Server::Server(): _port(TEST_PORT)
 
     if (bind(_listen_fd, (struct sockaddr *) &_server_address, sizeof(_server_address)) == -1)
     {
-        std::cerr << " webserv: bind error" << std::endl;
+        std::cerr << "webserv: bind error" << std::endl;
         exit(EXIT_FAILURE);
     }
 }

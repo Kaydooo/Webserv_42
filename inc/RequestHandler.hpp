@@ -13,6 +13,7 @@ class RequestHandler
         RequestHandler();
         RequestHandler(std::string);
         ~RequestHandler();
+        
         void    buildResponse();
         std::string    getContent();
         char*    getBody();

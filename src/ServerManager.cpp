@@ -13,8 +13,8 @@ void    ServerManager::setupServers()
 void    ServerManager::runServers()
 {
     fd_set pool_cpy;
-    int    set_size = 0;
-    setupSelect(set_size);
+    _biggest_fd = 0;
+    setupSelect();
     while(true)
     {
         pool_cpy = _recv_fd_pool;
@@ -24,14 +24,17 @@ void    ServerManager::runServers()
             exit(EXIT_FAILURE);
         }
 
-        for (int i = 0; i < FD_SETSIZE; ++i)
+        for (int i = 0; i <= _biggest_fd + 3; ++i)
         {
+
+            // std::cout << "BIGGETS FD is " << _biggest_fd << std::endl;
             if(FD_ISSET(i, &pool_cpy))
             {
-                if(!checkServer(i))
-                    handle_request(i, set_size);
+                if(_servers_map.find(i) != _servers_map.end())
+                    acceptNewConnection(_servers_map.find(i)->second);
                 else
-                    set_size++;
+                    handle_request(i);
+
             }
         }
     }
@@ -63,20 +66,21 @@ void    ServerManager::acceptNewConnection(Server &serv)
     }
     new_client.setSocket(client_sock);
     _clients.push_back(new_client);
+    _clients_map.insert(std::make_pair(client_sock, new_client));
+    _biggest_fd = (--_clients_map.end())->first;
     std::cout << "New Connection with: " << inet_ntoa(new_client.getAddress().sin_addr) << std::endl;
     // new_client.setAddress(client_address);
 }
 
-void    ServerManager::setupSelect(int &set_size)
+void    ServerManager::setupSelect()
 {
-    set_size += _servers.size();
     FD_ZERO(&_recv_fd_pool);
     
-    // Add all servers sockets to recv fd_set
+    // Add all servers sockets to _recv_fd_set
     for(server_vec::iterator it = _servers.begin(); it != _servers.end(); ++it)
     {
         if (listen(it->getFd(), 10) == -1) 
-        { 
+        {
             std::cerr << " webserv: listen error: " << strerror(errno) << std::endl;
             exit(EXIT_FAILURE);
         }
@@ -87,43 +91,23 @@ void    ServerManager::setupSelect(int &set_size)
             exit(EXIT_FAILURE);
         }
         FD_SET(it->getFd(), &_recv_fd_pool);
+        _servers_map.insert(std::make_pair(it->getFd(), *it));
     }
+    _biggest_fd = _servers.back().getFd();
+
 }
 
-int     ServerManager::checkServer(int &i)
-{
-    for(server_vec::iterator it = _servers.begin(); it != _servers.end(); ++it)
-    {
-        if(i == it->getFd())
-        {
-            acceptNewConnection(*it);
-            return (1);
-        }
-    }
-    return (0);
-}
-
-void    ServerManager::handle_request(int &i, int &set_size)
+void    ServerManager::handle_request(int &i)
 {
     char    buffer[8192];
     int     bytes_read = 0;
     int     client_index = 0;
     std::string request_content;
-    std::string        response_content;
+    std::string response_content;
 
-    if(client_index)
-    {}
-
-    for(size_t j = 0; j < _clients.size(); ++j)
-    {
-        if(_clients[j].getSocket() == i)
-            client_index = j;
-    }
-
-    std::cout << "Message from: " << inet_ntoa(_clients[client_index].getAddress().sin_addr) << std::endl;
+    std::cout << "Message from: " << inet_ntoa(_clients_map[i].getAddress().sin_addr) << std::endl;
 
     bytes_read = read(i, buffer, sizeof(buffer));
-    buffer[bytes_read] = '\0';
     request_content.append(buffer);
     memset(buffer, 0, sizeof(buffer));
     if(bytes_read < 0)
@@ -138,6 +122,8 @@ void    ServerManager::handle_request(int &i, int &set_size)
     send(i, response_content.c_str(), strlen(response_content.c_str()), 0);
     send(i, request.getBody(), request.getBodyLength(), 0);
     FD_CLR(i, &_recv_fd_pool);
-    set_size--;
     close(i);
+    _clients_map.erase(i);
+    if(_clients.empty())
+        _biggest_fd = (--_servers_map.end())->first;
 }
