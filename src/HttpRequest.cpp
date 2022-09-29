@@ -49,16 +49,28 @@ void    HttpRequest::feed(char *data, size_t size)
             else if (character == 'D')
                 _method = DELETE;
             else
-                std::cout << "Wrong Method" << std::endl; return;//send bad method response here and 
+            {    std::cout << "Wrong Method" << std::endl; return;//send bad method response here and 
                 //set error flag so it can be checked in select loop and reset this request object.
+            }
             _state = Request_Line_Method;
         }
         else if (_state == Request_Line_Method)
         {
-            if (character == _method_str[_method][_method_index])
-                _method_index ++;
-            if (_method_index == _method_str[_method].length())
-                _state == Request_Line_First_Space;
+                if(character == _method_str[_method][_method_index])
+                {
+                    _method_index++;
+                }
+                else
+                {
+                    std::cout << "Wrong Method" << std::endl;//send bad method response here and 
+                }
+
+                if(_method_index == _method_str[_method].length())
+                {
+                    _state = Request_Line_First_Space;
+                    std::cout << "LOL\n";
+                }
+
         }
         else if (_state == Request_Line_First_Space)
         {
@@ -76,7 +88,9 @@ void    HttpRequest::feed(char *data, size_t size)
                 std::cout << "Bad Character (Before_URI)" << std::endl; return;
             }
             else if (!allowedURI(character))
+            {    
                 std::cout << "Bad Character (Before_URI)" << std::endl; return;
+            }
             _storage.clear();
             _state = Request_Line_URI;
         }
@@ -89,7 +103,9 @@ void    HttpRequest::feed(char *data, size_t size)
                 _storage.clear();
             }
             else if (!allowedURI(character))
+            {   
                 std::cout << "Bad Character (Before_URI)" << std::endl; return;
+            }
         }
         else if (_state == Request_Line_Ver)
         {
@@ -137,7 +153,8 @@ void    HttpRequest::feed(char *data, size_t size)
             {
                 std::cout << "Bad Version(Major)" << std::endl; return;
             }
-            _ver_major = character - '0';
+            _ver_major = character;
+
             _state = Request_Line_Dot;
         }
         else if (_state == Request_Line_Dot)
@@ -154,7 +171,7 @@ void    HttpRequest::feed(char *data, size_t size)
             {
                 std::cout << "Bad Version(Major)" << std::endl; return;
             }
-            _ver_minor = character - '0';
+            _ver_minor = character;
             _state = Request_Line_CR;
         }
         else if (_state == Request_Line_CR)
@@ -172,6 +189,7 @@ void    HttpRequest::feed(char *data, size_t size)
                 std::cout << "Bad Character(Request_Line_LF)" << std::endl; return;
             }
             _state = H_Key;
+            _storage.clear();
         }
         else if (_state == H_Key && character == ':')
         {
@@ -212,7 +230,7 @@ void    HttpRequest::setHeader(std::string name, std::string value) { _request_h
 
 void        HttpRequest::printMessage()
 {
-    std::cout << _method_str[_method] + " " + _path + " " + "HTTP/" << _ver_major << "." << _ver_minor << std::endl;
+    std::cout << _method_str[_method] + " --" + _path + " " + "HTTP/" << _ver_major  << "." << _ver_minor << std::endl;
     
     for(std::map<std::string, std::string>::iterator it = _request_headers.begin();
     it != _request_headers.end(); ++it)
