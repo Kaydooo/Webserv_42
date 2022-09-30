@@ -8,6 +8,8 @@ HttpRequest::HttpRequest()
     _method_str[HttpMethod::POST] = "POST";
     _method_str[HttpMethod::DELETE] = "DELETE";
     _path = "";
+    _query = "";
+    _fragment = "";
     _method_index = 1;
     _state = Request_Line;
     _word_index = 0;
@@ -79,32 +81,79 @@ void    HttpRequest::feed(char *data, size_t size)
                 std::cout << "Bad Character (First_Space)" << std::endl; return;//send bad method response here and
                 //set error flag so it can be checked in select loop and reset this request object.
             }
-            _state = Request_Line_Before_URI;
+            _state = Request_Line_URI_Path_Slash;
+            continue;
         }
-        else if (_state == Request_Line_Before_URI)
+        else if (_state == Request_Line_URI_Path_Slash)
         {
             if (character == ' ' || character == '\r' || character == '\n')
             {
                 std::cout << "Bad Character (Before_URI)" << std::endl; return;
             }
-            else if (!allowedURI(character))
-            {    
+            else if (character == '/')
+            {
+                _state = Request_Line_URI_Path;
+                _storage.clear();
+            }
+            else
+            {
                 std::cout << "Bad Character (Before_URI)" << std::endl; return;
             }
-            _storage.clear();
-            _state = Request_Line_URI;
         }
-        else if (_state == Request_Line_URI)
+        else if (_state == Request_Line_URI_Path)
         {
             if (character == ' ')
             {
                 _state = Request_Line_Ver;
                 _path.append(_storage);
                 _storage.clear();
+                continue;
+            }
+            else if (character == '?')
+            {
+                _state = Request_Line_URI_Query;
+                _path.append(_storage);
+                _storage.clear();
+                continue;
             }
             else if (!allowedURI(character))
-            {   
-                std::cout << "Bad Character (Before_URI)" << std::endl; return;
+            {
+                std::cout << "Bad Character (URI_PATH)" << std::endl; return;
+            }
+        }
+        else if (_state == Request_Line_URI_Query)
+        {
+            if (character == ' ')
+            {
+                _state = Request_Line_Ver;
+                _query.append(_storage);
+                _storage.clear();
+                continue;
+            }
+            else if (character == '#')
+            {
+                _state = Request_Line_URI_Fragment;
+                _query.append(_storage);
+                _storage.clear();
+                continue;
+            }
+            else if (!allowedURI(character))
+            {
+                std::cout << "Bad Character (URI_Query)" << std::endl; return;
+            }
+        }
+        else if (_state == Request_Line_URI_Fragment)
+        {
+            if (character == ' ')
+            {
+                _state = Request_Line_Ver;
+                _fragment.append(_storage);
+                _storage.clear();
+                continue;
+            }
+            else if (!allowedURI(character))
+            {
+                std::cout << "Bad Character (URI_Fragment)" << std::endl; return;
             }
         }
         else if (_state == Request_Line_Ver)
@@ -190,6 +239,7 @@ void    HttpRequest::feed(char *data, size_t size)
             }
             _state = H_Key;
             _storage.clear();
+            continue;
         }
         else if (_state == H_Key && character == ':')
         {
@@ -230,7 +280,8 @@ void    HttpRequest::setHeader(std::string name, std::string value) { _request_h
 
 void        HttpRequest::printMessage()
 {
-    std::cout << _method_str[_method] + " --" + _path + " " + "HTTP/" << _ver_major  << "." << _ver_minor << std::endl;
+    std::cout << _method_str[_method] + " --" + _path + "?" + _query + "#" + _fragment
+              + " " + "HTTP/" << _ver_major  << "." << _ver_minor << std::endl;
     
     for(std::map<std::string, std::string>::iterator it = _request_headers.begin();
     it != _request_headers.end(); ++it)

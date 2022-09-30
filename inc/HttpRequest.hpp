@@ -18,6 +18,10 @@ enum ParsingState
     Request_Line_Path_First_Char,
     Request_Line_Before_URI,
     Request_Line_URI,
+    Request_Line_URI_Path_Slash,
+    Request_Line_URI_Path,
+    Request_Line_URI_Query,
+    Request_Line_URI_Fragment,
     Request_Line_Ver,
     Request_Line_HT,
     Request_Line_HTT,
@@ -54,6 +58,8 @@ class HttpRequest
         
     protected:
         std::string     _path;
+        std::string     _query;
+        std::string     _fragment;
         std::map<std::string, std::string> _request_headers;
         char    *_request_body;
         HttpMethod _method;
