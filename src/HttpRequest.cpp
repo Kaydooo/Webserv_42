@@ -116,6 +116,13 @@ void    HttpRequest::feed(char *data, size_t size)
                 _storage.clear();
                 continue;
             }
+            else if (character == '#')
+            {
+                _state = Request_Line_URI_Fragment;
+                _path.append(_storage);
+                _storage.clear();
+                continue;
+            }
             else if (!allowedURI(character))
             {
                 std::cout << "Bad Character (URI_PATH)" << std::endl; return;
@@ -237,17 +244,47 @@ void    HttpRequest::feed(char *data, size_t size)
             {
                 std::cout << "Bad Character(Request_Line_LF)" << std::endl; return;
             }
-            _state = H_Key;
+            _state = Field_Name_Start;
             _storage.clear();
             continue;
         }
-        else if (_state == H_Key && character == ':')
-        {
-            _key_storage = _storage;
-            _storage.clear();
-            // _skip = true;
-            _state = H_Value;
-            continue;
+        else if (_state == Field_Name_Start)
+        { 
+            //if no body then parsing is completed.
+            if(character == '\r')
+                _state = Fields_End;
+            else// check here if the character is allowed to be in field name;
+                _state = Field_Name;
+        }
+        else if (_state == Fields_End)
+        { 
+            //if no body then parsing is completed.
+            if(character == '\n')
+            {
+                //if(there is body)
+                    //_state = body;
+                 //else
+                    //_complete_flag = true;
+                _complete_flag = true;
+                 continue;
+            }
+            else
+            {
+                std::cout << "Bad Character(Field_Name_End)" << std::endl;
+                return;
+            }
+        }
+        else if (_state == Field_Name)
+        { 
+            if (character == ':')
+            { 
+                _key_storage = _storage;
+                _storage.clear();
+                _state = H_Value;
+                continue;
+            }
+            //if(!character allowed)
+            // error;
         }
         else if (_state == H_Value && character == '\r')
         {
@@ -255,14 +292,8 @@ void    HttpRequest::feed(char *data, size_t size)
             _key_storage.clear();
             _storage.clear();
             _skip = true;
-            _state = H_Key;
+            _state = Field_Name_Start;
             continue;
-        }
-        else if ( _state == H_Key && character == '\r')
-        {
-            //if no body then parsing is completed.
-            _complete_flag = true;
-            break;
         }
         _storage += character;
     }

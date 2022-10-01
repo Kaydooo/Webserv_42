@@ -32,6 +32,9 @@ enum ParsingState
     Request_Line_Minor,
     Request_Line_CR,
     Request_Line_LF,
+    Field_Name_Start,
+    Fields_End,
+    Field_Name,
     H_Key,
     H_Value,
     Body
