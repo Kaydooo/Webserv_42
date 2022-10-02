@@ -60,6 +60,7 @@ int main(int argc, char **argv)
         // std::cout << read_size << std::endl;
         if(read_size > 0)
         {   
+            // std::cout  << result_buffer << "---------------------------------------------------------\n" << std::endl;
             request.feed(result_buffer, read_size);
             memset(result_buffer, 0, sizeof(result_buffer));
             request.printMessage();

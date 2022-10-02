@@ -24,8 +24,27 @@ HttpRequest::~HttpRequest() {}
 
 bool    allowedURI(uint8_t ch)
 {
-    if((ch >= '&' && ch <= ';') || (ch >= '?' && ch <= '[') || (ch >= 'a' && ch <= 'z')
-    || ch == '!' || ch == '#' || ch == '$' || ch == '=' || ch == ']' || ch == '_' || ch == '~')
+    if ((ch >= '&' && ch <= ';') || (ch >= '?' && ch <= '[') || (ch >= 'a' && ch <= 'z') ||
+       ch == '!' || ch == '#' || ch == '$' || ch == '=' || ch == ']' || ch == '_' || ch == '~')
+        return (true);
+    return (false);
+}
+
+/**
+ 
+* Checks whether the character passed is allowed in a field name
+* Characters allowed as specifed in RFC:
+
+"!" / "#" / "$" / "%" / "&" / "'" 
+/ "*" / "+" / "-" / "." / "^" / "_" 
+/ "`" / "|" / "~" / 0-9 / A-Z / a-z
+
+**/
+bool    isToken(uint8_t ch)
+{
+    if (ch == '!' || (ch >= '#' && ch <= '\'') || ch == '*'|| ch == '+' || ch == '-'  || ch == '.' || 
+       (ch >= '0' && ch <= '9') || (ch >= 'A' && ch <= 'Z') || (ch >= '^' && ch <= '`') ||
+       (ch >= 'a' && ch <= 'z') || ch == '|')
         return (true);
     return (false);
 }
@@ -242,7 +261,8 @@ void    HttpRequest::feed(char *data, size_t size)
         {
             if (character != '\n')
             {
-                std::cout << "Bad Character(Request_Line_LF)" << std::endl; return;
+                std::cout << "Bad Character(Request_Line_LF)" << std::endl;
+                return;
             }
             _state = Field_Name_Start;
             _storage.clear();
@@ -251,21 +271,29 @@ void    HttpRequest::feed(char *data, size_t size)
         else if (_state == Field_Name_Start)
         { 
             //if no body then parsing is completed.
-            if(character == '\r')
+            if (character == '\r')
                 _state = Fields_End;
-            else// check here if the character is allowed to be in field name;
+            else if (isToken(character))// check here if the character is allowed to be in field name;
                 _state = Field_Name;
+            else
+            {
+                std::cout << "Bad Character(Field_Name_Start)" << std::endl;
+                return;
+            }
+
         }
         else if (_state == Fields_End)
-        { 
+        {
             //if no body then parsing is completed.
-            if(character == '\n')
+            if (character == '\n')
             {
                 //if(there is body)
                     //_state = body;
                  //else
                     //_complete_flag = true;
                 _complete_flag = true;
+                _storage.clear();
+                _state = Before_Message_Body;
                  continue;
             }
             else
@@ -275,13 +303,18 @@ void    HttpRequest::feed(char *data, size_t size)
             }
         }
         else if (_state == Field_Name)
-        { 
+        {
             if (character == ':')
-            { 
+            {
                 _key_storage = _storage;
                 _storage.clear();
                 _state = H_Value;
                 continue;
+            }
+            else if (!isToken(character))
+            {
+                std::cout << "Bad Character(Field_Name)" << std::endl;
+                return;
             }
             //if(!character allowed)
             // error;
@@ -311,7 +344,7 @@ void    HttpRequest::setHeader(std::string name, std::string value) { _request_h
 
 void        HttpRequest::printMessage()
 {
-    std::cout << _method_str[_method] + " --" + _path + "?" + _query + "#" + _fragment
+    std::cout << _method_str[_method] + " " + _path + "?" + _query + "#" + _fragment
               + " " + "HTTP/" << _ver_major  << "." << _ver_minor << std::endl;
     
     for(std::map<std::string, std::string>::iterator it = _request_headers.begin();

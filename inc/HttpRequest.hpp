@@ -37,7 +37,8 @@ enum ParsingState
     Field_Name,
     H_Key,
     H_Value,
-    Body
+    Before_Message_Body,
+    Message_Body
 };
 
 /* 
