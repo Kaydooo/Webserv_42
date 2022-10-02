@@ -35,8 +35,8 @@ enum ParsingState
     Field_Name_Start,
     Fields_End,
     Field_Name,
-    H_Key,
-    H_Value,
+    Field_Value,
+    Field_Value_End,
     Before_Message_Body,
     Message_Body
 };

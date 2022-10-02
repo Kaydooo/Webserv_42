@@ -56,27 +56,25 @@ void    HttpRequest::feed(char *data, size_t size)
     for(size_t i = 0; i < size; ++i)
     {
         character = data[i];
-        if(_skip)
+        switch (_state)
         {
-            _skip = false;
-            continue;
-        }
-        if (_state == Request_Line)
-        {
-            if (character == 'G')
-                _method = GET;
-            else if (character == 'P')
-                _method = POST;
-            else if (character == 'D')
-                _method = DELETE;
-            else
-            {    std::cout << "Wrong Method" << std::endl; return;//send bad method response here and 
-                //set error flag so it can be checked in select loop and reset this request object.
+            case Request_Line:
+            {
+                if (character == 'G')
+                    _method = GET;
+                else if (character == 'P')
+                    _method = POST;
+                else if (character == 'D')
+                    _method = DELETE;
+                else
+                {    std::cout << "Wrong Method" << std::endl; return;//send bad method response here and 
+                    //set error flag so it can be checked in select loop and reset this request object.
+                }
+                _state = Request_Line_Method;
+                break;
             }
-            _state = Request_Line_Method;
-        }
-        else if (_state == Request_Line_Method)
-        {
+            case Request_Line_Method:
+            {
                 if(character == _method_str[_method][_method_index])
                 {
                     _method_index++;
@@ -91,243 +89,277 @@ void    HttpRequest::feed(char *data, size_t size)
                     _state = Request_Line_First_Space;
                     std::cout << "LOL\n";
                 }
+                break;
+            }
+            case Request_Line_First_Space:
+            {
+                if (character != ' ')
+                {
+                    std::cout << "Bad Character (First_Space)" << std::endl; return;//send bad method response here and
+                    //set error flag so it can be checked in select loop and reset this request object.
+                }
+                _state = Request_Line_URI_Path_Slash;
+                continue;
+            }
+            case Request_Line_URI_Path_Slash:
+            {
+                if (character == ' ' || character == '\r' || character == '\n')
+                {
+                    std::cout << "Bad Character (Before_URI)" << std::endl; return;
+                }
+                else if (character == '/')
+                {
+                    _state = Request_Line_URI_Path;
+                    _storage.clear();
+                }
+                else
+                {
+                    std::cout << "Bad Character (Before_URI)" << std::endl; return;
+                }
+                break;
+            }
+            case Request_Line_URI_Path:
+            {
+                if (character == ' ')
+                {
+                    _state = Request_Line_Ver;
+                    _path.append(_storage);
+                    _storage.clear();
+                    continue;
+                }
+                else if (character == '?')
+                {
+                    _state = Request_Line_URI_Query;
+                    _path.append(_storage);
+                    _storage.clear();
+                    continue;
+                }
+                else if (character == '#')
+                {
+                    _state = Request_Line_URI_Fragment;
+                    _path.append(_storage);
+                    _storage.clear();
+                    continue;
+                }
+                else if (!allowedURI(character))
+                {
+                    std::cout << "Bad Character (URI_PATH)" << std::endl; return;
+                }
+                break;
+            }
+            case Request_Line_URI_Query:
+            {
+                if (character == ' ')
+                {
+                    _state = Request_Line_Ver;
+                    _query.append(_storage);
+                    _storage.clear();
+                    continue;
+                }
+                else if (character == '#')
+                {
+                    _state = Request_Line_URI_Fragment;
+                    _query.append(_storage);
+                    _storage.clear();
+                    continue;
+                }
+                else if (!allowedURI(character))
+                {
+                    std::cout << "Bad Character (URI_Query)" << std::endl; return;
+                }
+                break;
+            }
+            case Request_Line_URI_Fragment:
+            {
+                if (character == ' ')
+                {
+                    _state = Request_Line_Ver;
+                    _fragment.append(_storage);
+                    _storage.clear();
+                    continue;
+                }
+                else if (!allowedURI(character))
+                {
+                    std::cout << "Bad Character (URI_Fragment)" << std::endl; return;
+                }
+                break;
+            }
+            case Request_Line_Ver:
+            {
+                if (character != 'H')
+                {
+                    std::cout << "Bad Version" << std::endl; return;
+                }
+                _state = Request_Line_HT;
+                break;
+            }
+            case Request_Line_HT:
+            {
+                if (character != 'T')
+                {
+                    std::cout << "Bad Version" << std::endl; return;
+                }
+                _state = Request_Line_HTT;
+                break;
+            }
+            case Request_Line_HTT:
+            {
+                if (character != 'T')
+                {
+                    std::cout << "Bad Version" << std::endl; return;
+                }
+                _state = Request_Line_HTTP;
+                break;
+            }
+            case Request_Line_HTTP:
+            {
+                if (character != 'P')
+                {
+                    std::cout << "Bad Version" << std::endl; return;
+                }
+                _state = Request_Line_HTTP_Slash;
+                break;
+            }
+            case Request_Line_HTTP_Slash:
+            {
+                if (character != '/')
+                {
+                    std::cout << "Bad Version(Slash)" << std::endl; return;
+                }
+                _state = Request_Line_Major;
+                break;
+            }
+            case Request_Line_Major:
+            {
+                if (!isdigit(character))
+                {
+                    std::cout << "Bad Version(Major)" << std::endl; return;
+                }
+                _ver_major = character;
 
-        }
-        else if (_state == Request_Line_First_Space)
-        {
-            if (character != ' ')
-            {
-                std::cout << "Bad Character (First_Space)" << std::endl; return;//send bad method response here and
-                //set error flag so it can be checked in select loop and reset this request object.
+                _state = Request_Line_Dot;
+                break;
             }
-            _state = Request_Line_URI_Path_Slash;
-            continue;
-        }
-        else if (_state == Request_Line_URI_Path_Slash)
-        {
-            if (character == ' ' || character == '\r' || character == '\n')
+            case Request_Line_Dot:
             {
-                std::cout << "Bad Character (Before_URI)" << std::endl; return;
+                if (character != '.')
+                {
+                    std::cout << "Bad Version(Dot)" << std::endl; return;
+                }
+                _state = Request_Line_Minor;
+                break;
             }
-            else if (character == '/')
+            case Request_Line_Minor:
             {
-                _state = Request_Line_URI_Path;
-                _storage.clear();
+                if (!isdigit(character))
+                {
+                    std::cout << "Bad Version(Major)" << std::endl; return;
+                }
+                _ver_minor = character;
+                _state = Request_Line_CR;
+                break;
             }
-            else
+            case Request_Line_CR:
             {
-                std::cout << "Bad Character (Before_URI)" << std::endl; return;
+                if (character != '\r')
+                {
+                    std::cout << "Bad Character(Request_Line_CR)" << std::endl; return;
+                }
+                _state = Request_Line_LF;
+                break;
             }
-        }
-        else if (_state == Request_Line_URI_Path)
-        {
-            if (character == ' ')
+            case Request_Line_LF:
             {
-                _state = Request_Line_Ver;
-                _path.append(_storage);
-                _storage.clear();
-                continue;
-            }
-            else if (character == '?')
-            {
-                _state = Request_Line_URI_Query;
-                _path.append(_storage);
-                _storage.clear();
-                continue;
-            }
-            else if (character == '#')
-            {
-                _state = Request_Line_URI_Fragment;
-                _path.append(_storage);
+                if (character != '\n')
+                {
+                    std::cout << "Bad Character(Request_Line_LF)" << std::endl;
+                    return;
+                }
+                _state = Field_Name_Start;
                 _storage.clear();
                 continue;
             }
-            else if (!allowedURI(character))
-            {
-                std::cout << "Bad Character (URI_PATH)" << std::endl; return;
+            case Field_Name_Start:
+            { 
+                //if no body then parsing is completed.
+                if (character == '\r')
+                    _state = Fields_End;
+                else if (isToken(character))// check here if the character is allowed to be in field name;
+                    _state = Field_Name;
+                else
+                {
+                    std::cout << "Bad Character(Field_Name_Start)" << std::endl;
+                    return;
+                }
+                break;
             }
-        }
-        else if (_state == Request_Line_URI_Query)
-        {
-            if (character == ' ')
+            case Fields_End:
             {
-                _state = Request_Line_Ver;
-                _query.append(_storage);
-                _storage.clear();
-                continue;
+                //if no body then parsing is completed.
+                if (character == '\n')
+                {
+                    //if(there is body)
+                        //_state = body;
+                    //else
+                        //_complete_flag = true;
+                    _complete_flag = true;
+                    _storage.clear();
+                    _state = Before_Message_Body;
+                    continue;
+                }
+                else
+                {
+                    std::cout << "Bad Character(Field_Name_End)" << std::endl;
+                    return;
+                }
+                break;
             }
-            else if (character == '#')
+            case Field_Name:
             {
-                _state = Request_Line_URI_Fragment;
-                _query.append(_storage);
-                _storage.clear();
-                continue;
+                if (character == ':')
+                {
+                    _key_storage = _storage;
+                    _storage.clear();
+                    _state = Field_Value;
+                    continue;
+                }
+                else if (!isToken(character))
+                {
+                    std::cout << "Bad Character(Field_Name)" << std::endl;
+                    return;
+                }
+                break;
+                //if(!character allowed)
+                // error;
             }
-            else if (!allowedURI(character))
+            case Field_Value:
             {
-                std::cout << "Bad Character (URI_Query)" << std::endl; return;
+                if( character == '\r' )
+                {
+                    setHeader(_key_storage, _storage);
+                    _key_storage.clear();
+                    _storage.clear();
+                    _state = Field_Value_End;
+                    continue;
+                }
+                // check here if character is allowed in field vlaue;
+                break;
             }
-        }
-        else if (_state == Request_Line_URI_Fragment)
-        {
-            if (character == ' ')
+            case Field_Value_End:
             {
-                _state = Request_Line_Ver;
-                _fragment.append(_storage);
-                _storage.clear();
-                continue;
+                if( character == '\n' )
+                {
+                    _state = Field_Name_Start;
+                    continue;
+                }
+                else
+                {
+                    std::cout << "Bad Character(Field_Name_Start)" << std::endl;
+                    return;
+                }
+                break;
             }
-            else if (!allowedURI(character))
-            {
-                std::cout << "Bad Character (URI_Fragment)" << std::endl; return;
-            }
-        }
-        else if (_state == Request_Line_Ver)
-        {
-            if (character != 'H')
-            {
-                std::cout << "Bad Version" << std::endl; return;
-            }
-            _state = Request_Line_HT;
-        }
-        else if (_state == Request_Line_HT)
-        {
-            if (character != 'T')
-            {
-                std::cout << "Bad Version" << std::endl; return;
-            }
-            _state = Request_Line_HTT;
-        }
-        else if (_state == Request_Line_HTT)
-        {
-            if (character != 'T')
-            {
-                std::cout << "Bad Version" << std::endl; return;
-            }
-            _state = Request_Line_HTTP;
-        }
-        else if (_state == Request_Line_HTTP)
-        {
-            if (character != 'P')
-            {
-                std::cout << "Bad Version" << std::endl; return;
-            }
-            _state = Request_Line_HTTP_Slash;
-        }
-        else if (_state == Request_Line_HTTP_Slash)
-        {
-            if (character != '/')
-            {
-                std::cout << "Bad Version(Slash)" << std::endl; return;
-            }
-            _state = Request_Line_Major;
-        }
-        else if (_state == Request_Line_Major)
-        {
-            if (!isdigit(character))
-            {
-                std::cout << "Bad Version(Major)" << std::endl; return;
-            }
-            _ver_major = character;
-
-            _state = Request_Line_Dot;
-        }
-        else if (_state == Request_Line_Dot)
-        {
-            if (character != '.')
-            {
-                std::cout << "Bad Version(Dot)" << std::endl; return;
-            }
-            _state = Request_Line_Minor;
-        }
-        else if (_state == Request_Line_Minor)
-        {
-            if (!isdigit(character))
-            {
-                std::cout << "Bad Version(Major)" << std::endl; return;
-            }
-            _ver_minor = character;
-            _state = Request_Line_CR;
-        }
-        else if (_state == Request_Line_CR)
-        {
-            if (character != '\r')
-            {
-                std::cout << "Bad Character(Request_Line_CR)" << std::endl; return;
-            }
-            _state = Request_Line_LF;
-        }
-        else if (_state == Request_Line_LF)
-        {
-            if (character != '\n')
-            {
-                std::cout << "Bad Character(Request_Line_LF)" << std::endl;
-                return;
-            }
-            _state = Field_Name_Start;
-            _storage.clear();
-            continue;
-        }
-        else if (_state == Field_Name_Start)
-        { 
-            //if no body then parsing is completed.
-            if (character == '\r')
-                _state = Fields_End;
-            else if (isToken(character))// check here if the character is allowed to be in field name;
-                _state = Field_Name;
-            else
-            {
-                std::cout << "Bad Character(Field_Name_Start)" << std::endl;
-                return;
-            }
-
-        }
-        else if (_state == Fields_End)
-        {
-            //if no body then parsing is completed.
-            if (character == '\n')
-            {
-                //if(there is body)
-                    //_state = body;
-                 //else
-                    //_complete_flag = true;
-                _complete_flag = true;
-                _storage.clear();
-                _state = Before_Message_Body;
-                 continue;
-            }
-            else
-            {
-                std::cout << "Bad Character(Field_Name_End)" << std::endl;
-                return;
-            }
-        }
-        else if (_state == Field_Name)
-        {
-            if (character == ':')
-            {
-                _key_storage = _storage;
-                _storage.clear();
-                _state = H_Value;
-                continue;
-            }
-            else if (!isToken(character))
-            {
-                std::cout << "Bad Character(Field_Name)" << std::endl;
-                return;
-            }
-            //if(!character allowed)
-            // error;
-        }
-        else if (_state == H_Value && character == '\r')
-        {
-            setHeader(_key_storage, _storage);
-            _key_storage.clear();
-            _storage.clear();
-            _skip = true;
-            _state = Field_Name_Start;
-            continue;
-        }
+        }//end of swtich 
         _storage += character;
     }
 }
