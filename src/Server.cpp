@@ -1,5 +1,4 @@
 # include "../inc/Server.hpp"
-# include "../inc/RequestHandler.hpp"
 
 Server::Server(): _port(TEST_PORT)
 {

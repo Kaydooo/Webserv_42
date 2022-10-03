@@ -98,7 +98,8 @@ void    ServerManager::handleRequest(int &i)
     char    buffer[8192];
     int     bytes_read = 0;
 
-    std::cout << "Message from: " << inet_ntoa(_clients_map[i].getAddress().sin_addr) << std::endl;
+    std::cout << "Message from: " << inet_ntoa(_clients_map[i].getAddress().sin_addr) << " Socket no : " <<
+    i << std::endl;
 
     bytes_read = read(i, buffer, sizeof(buffer));
     if(bytes_read < 0)
@@ -123,11 +124,11 @@ void    ServerManager::handleRequest(int &i)
     }
     else if(_clients_map[i].requestState()) // 1 = parsing completed so we can work on the response.
     {
-        RequestHandler response(_clients_map[i].getRequest()); // change class name to something else later.
+        Response response(_clients_map[i].getRequest());
         response.buildResponse();
         send(i, response.getContent().c_str(), strlen(response.getContent().c_str()), 0);
         send(i, response.getBody(), response.getBodyLength(), 0);
-        if(_clients_map[i].keepAlive() == 0)
+        if(_clients_map[i].keepAlive() == 0 || response.getErrorCode())
         {
             FD_CLR(i, &_recv_fd_pool);
             close(i);
@@ -136,7 +137,7 @@ void    ServerManager::handleRequest(int &i)
                 _biggest_fd = (--_servers_map.end())->first;
         }
         else
-            _clients_map[i].clear();
+            _clients_map[i].clearForNextRequest();
     }
 
 }

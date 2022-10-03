@@ -1,8 +1,8 @@
-# include "../inc/RequestHandler.hpp"
+# include "../inc/Response.hpp"
 
-RequestHandler::RequestHandler(){}
+Response::Response(){}
 
-RequestHandler::~RequestHandler(){}
+Response::~Response(){}
 
 /* 
   TODO: Request message to be parsed here.
@@ -12,14 +12,14 @@ RequestHandler::~RequestHandler(){}
   3- string _request_body filled with request body (if expected).
 */
 
-RequestHandler::RequestHandler(HttpRequest &req): _request(req) {}
+Response::Response(HttpRequest &req): _request(req), _error_code(0) {}
 
 /* 
    Uses both request_line + request_headers to build the correct response.
    Outcome: Build the response message that will be sent back to the client.
 */
 
-void    RequestHandler::addHeaders()
+void    Response::addHeaders()
 {
     std::stringstream ss;
 
@@ -47,7 +47,7 @@ void    RequestHandler::addHeaders()
     _response_content.append("\r\n\n");
 }
 
-void    RequestHandler::buildResponse()
+void    Response::buildResponse()
 {
 
     if(buildBody())
@@ -58,15 +58,15 @@ void    RequestHandler::buildResponse()
     // Temp for testing only
 }
 
-std::string RequestHandler::getContent() { return _response_content; }
-char*       RequestHandler::getBody() { return _request_body; }
-size_t      RequestHandler::getBodyLength() { return _body_length; }
+std::string Response::getContent() { return _response_content; }
+char*       Response::getBody() { return _request_body; }
+size_t      Response::getBodyLength() { return _body_length; }
 
 
 
 
 /* Check if there is any error and assign the correct status code to response message */
-void        RequestHandler::addStatus()
+void        Response::addStatus()
 {
     // For testing Assume no errors for now.
     _response_content.append("HTTP/1.1 200 OK\n");
@@ -89,17 +89,18 @@ size_t file_size(std::string file_path)
     return size;
 }
 
-int    RequestHandler::buildBody()
+int    Response::buildBody()
 {
     if(!readFile())
     {
+        _error_code = 404;
         std::cout << "readFile Fail !" << std::endl;
         return (0);
     }
     return (1);
 }
 
-int     RequestHandler::readFile()
+int     Response::readFile()
 {
     int         file_fd;
     int         bytes_read;
@@ -128,4 +129,10 @@ int     RequestHandler::readFile()
         return (0);
     }
     return (1);
+}
+
+
+int      Response::getErrorCode()
+{
+    return (_error_code);
 }

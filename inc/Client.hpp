@@ -21,7 +21,7 @@ class Client
         bool                requestState();
         bool                requestError();
         bool                keepAlive();
-        void                clear();
+        void                clearForNextRequest();
 
 
     private:

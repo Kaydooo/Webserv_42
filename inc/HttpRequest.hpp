@@ -65,7 +65,7 @@ class HttpRequest
         void        feed(char *data, size_t size);
         bool        parsingCompleted();
         void        printMessage();
-        void        clearForNextRequest();
+        void        clear();
         int         errorCode();
         bool        keepAlive();
         

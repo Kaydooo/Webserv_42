@@ -513,7 +513,7 @@ int     HttpRequest::errorCode()
     return(_error_code);
 }
 
-void    HttpRequest::clearForNextRequest()
+void    HttpRequest::clear()
 {
     _path = "";
     _query = "";

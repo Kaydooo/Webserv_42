@@ -44,9 +44,9 @@ bool        Client::requestError()
     return (_request.errorCode());
 }
 
-void        Client::clear()
+void        Client::clearForNextRequest()
 {
-    _request.clearForNextRequest();
+    _request.clear();
 }
 
 bool        Client::keepAlive()

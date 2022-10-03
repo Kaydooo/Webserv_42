@@ -1,5 +1,5 @@
-#ifndef REQUESTHANDLER_HPP
-# define REQUESTHANDLER_HPP
+#ifndef RESPONSE_HPP
+# define RESPONSE_HPP
 
 # include "Webserv.hpp"
 # include "HttpRequest.hpp"
@@ -9,17 +9,19 @@
     Takes a string object that contain the whole request message and parse it into 3 Variables 
     _request_line, _request_headers, _request_body. And build the response message.
 */
-class RequestHandler
+class Response
 {
     public:
-        RequestHandler();
-        RequestHandler(HttpRequest&);
-        ~RequestHandler();
+        Response();
+        Response(HttpRequest&);
+        ~Response();
         
         void    buildResponse();
         std::string    getContent();
         char*    getBody();
         size_t   getBodyLength();
+        int      getErrorCode();
+
 
     private:
         HttpRequest _request;
@@ -30,6 +32,7 @@ class RequestHandler
         char* _request_body;
         std::string _response_content;
         std::string _response_body;
+        int         _error_code;
 
         int    buildBody();
         void    addStatus();
@@ -39,4 +42,4 @@ class RequestHandler
 
 };
 
-#endif // REQUESTHANDLER_HPP
+#endif // RESPONSE_HPP
