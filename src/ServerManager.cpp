@@ -115,6 +115,7 @@ void    ServerManager::handleRequest(int &i)
     if (_clients_map[i].requestError())
     {
         std::cout << "Bad Request, Connection Closed !" << std::endl; // send bad request response here.
+        FD_CLR(i, &_recv_fd_pool);
         close(i);
         _clients_map.erase(i);
         if(_clients.empty())
