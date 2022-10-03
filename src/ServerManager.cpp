@@ -20,27 +20,23 @@ void    ServerManager::runServers()
         pool_cpy = _recv_fd_pool;
         if( select(FD_SETSIZE, &pool_cpy, NULL, NULL, NULL) < 0 )
         {
-            std::cerr << " webserv: select error " << strerror(errno) <<std::endl;
+            std::cerr << " webserv: select error " << strerror(errno) << std::endl;
             exit(EXIT_FAILURE);
         }
 
         for (int i = 0; i <= _biggest_fd + 3; ++i)
         {
 
-            // std::cout << "BIGGETS FD is " << _biggest_fd << std::endl;
             if(FD_ISSET(i, &pool_cpy))
             {
-                if(_servers_map.find(i) != _servers_map.end())
+                if(_servers_map.count(i))
                     acceptNewConnection(_servers_map.find(i)->second);
                 else
-                    handle_request(i);
+                    handleRequest(i);
 
             }
         }
     }
-    // std::vector<Server>::iterator it;
-    // for(it = _servers.begin(); it != _servers.end(); ++it)
-    //     it->run();
 }
 
 
@@ -97,33 +93,54 @@ void    ServerManager::setupSelect()
 
 }
 
-void    ServerManager::handle_request(int &i)
+void    ServerManager::handleRequest(int &i)
 {
     char    buffer[8192];
     int     bytes_read = 0;
-    int     client_index = 0;
-    std::string request_content;
-    std::string response_content;
 
     std::cout << "Message from: " << inet_ntoa(_clients_map[i].getAddress().sin_addr) << std::endl;
 
     bytes_read = read(i, buffer, sizeof(buffer));
-    request_content.append(buffer);
-    memset(buffer, 0, sizeof(buffer));
     if(bytes_read < 0)
     {
-        std::cerr << " webserv: read error CS99" << strerror(errno) << std::endl;
+        std::cerr << " webserv: read error" << strerror(errno) << std::endl;
         exit(EXIT_FAILURE);
     }
-    RequestHandler request(request_content);
-    request_content.clear();
-    request.buildResponse();
-    response_content = request.getContent();
-    send(i, response_content.c_str(), strlen(response_content.c_str()), 0);
-    send(i, request.getBody(), request.getBodyLength(), 0);
-    FD_CLR(i, &_recv_fd_pool);
-    close(i);
-    _clients_map.erase(i);
-    if(_clients.empty())
-        _biggest_fd = (--_servers_map.end())->first;
+    else if(bytes_read != 0)
+    {
+        _clients_map[i].feedData(buffer, bytes_read);
+        memset(buffer, 0, sizeof(buffer));
+        
+    }
+    if (_clients_map[i].requestError())
+    {
+        std::cout << "Bad Request, Connection Closed !" << std::endl; // send bad request response here.
+        close(i);
+        _clients_map.erase(i);
+        if(_clients.empty())
+            _biggest_fd = (--_servers_map.end())->first;
+    }
+    else if(_clients_map[i].requestState()) // 1 = parsing completed so we can work on the response.
+    {
+        RequestHandler response(_clients_map[i].getRequest()); // change class name to something else later.
+        response.buildResponse();
+        send(i, response.getContent().c_str(), strlen(response.getContent().c_str()), 0);
+        send(i, response.getBody(), response.getBodyLength(), 0);
+        if(_clients_map[i].keepAlive() == 0)
+        {
+            FD_CLR(i, &_recv_fd_pool);
+            close(i);
+            _clients_map.erase(i);
+            if(_clients.empty())
+                _biggest_fd = (--_servers_map.end())->first;
+        }
+        else
+            _clients_map[i].clear();
+    }
+
 }
+
+// void            ServerManager::sendResponse(int i, HttpRequest& req)
+// {
+
+// }

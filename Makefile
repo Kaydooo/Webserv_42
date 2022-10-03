@@ -1,6 +1,6 @@
 NAME = webserv
 
-SRCS = src/main.cpp src/ServerManager.cpp src/Server.cpp src/RequestHandler.cpp src/Client.cpp
+SRCS = src/main.cpp src/ServerManager.cpp src/Server.cpp src/RequestHandler.cpp src/Client.cpp src/HttpRequest.cpp
 
 HEADERS	= inc/Webserv.hpp
 

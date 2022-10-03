@@ -31,7 +31,8 @@ class ServerManager
 
         void acceptNewConnection(Server &);
         void setupSelect();
-        void handle_request(int &);
+        void handleRequest(int &);
+        void sendResponse(int i, HttpRequest& req);
         // int  checkServer(int &);
 
 };

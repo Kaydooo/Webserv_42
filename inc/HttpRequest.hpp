@@ -7,7 +7,8 @@ enum HttpMethod
 {
     GET,
     POST, 
-    DELETE, 
+    DELETE,
+    NONE
 };
 
 enum ParsingState
@@ -38,7 +39,8 @@ enum ParsingState
     Field_Value,
     Field_Value_End,
     Before_Message_Body,
-    Message_Body
+    Message_Body,
+    Parsing_Done
 };
 
 /* 
@@ -50,36 +52,45 @@ class HttpRequest
     public:
         HttpRequest();
         ~HttpRequest();
-        void    feed(char *data, size_t size);
-        bool    parsingCompleted();
-        HttpMethod &getMethod();
-        void        setMethod(HttpMethod &);
+
+        HttpMethod  &getMethod();
+        std::string &getPath();
+        std::string &getQuery();
+        std::string &getFragment();
         std::string &getHeader(std::string &);
+
+        void        setMethod(HttpMethod &);
         void        setHeader(std::string , std::string );
+
+        void        feed(char *data, size_t size);
+        bool        parsingCompleted();
         void        printMessage();
-
-
+        void        clearForNextRequest();
+        int         errorCode();
+        bool        keepAlive();
         
-    protected:
+    private:
         std::string     _path;
         std::string     _query;
         std::string     _fragment;
         std::map<std::string, std::string> _request_headers;
-        char    *_request_body;
+        std::vector<u_int8_t> _body;
         HttpMethod _method;
+        std::map<u_int8_t, std::string> _method_str;
         ParsingState  _state;
-        int         _word_index;
-        int         _line_number;
+        int         _body_length;
+        bool        _fields_done_flag;
+        bool        _body_flag;
+        bool        _body_done_flag;
         bool        _complete_flag;
-        bool        _skip;
+        int         _error_code;
         std::string        _storage;
         std::string        _key_storage;
-        std::map<u_int8_t, std::string> _method_str;
         int                 _method_index;
         u_int8_t    _ver_major;
         u_int8_t    _ver_minor;
         
-    private:
+        void        _handle_headers();
 };
 
 #endif

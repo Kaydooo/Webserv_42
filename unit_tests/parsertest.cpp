@@ -63,13 +63,14 @@ int main(int argc, char **argv)
             // std::cout  << result_buffer << "---------------------------------------------------------\n" << std::endl;
             request.feed(result_buffer, read_size);
             memset(result_buffer, 0, sizeof(result_buffer));
-            request.printMessage();
         }
+            request.printMessage();
         if(request.parsingCompleted())
         {
             close(accept_socket);
             std::cout << "Parsing completed !" << std::endl;
             sleep(100);
         }
+
     }
 }

@@ -2,6 +2,8 @@
 # define REQUESTHANDLER_HPP
 
 # include "Webserv.hpp"
+# include "HttpRequest.hpp"
+
 
 /* 
     Takes a string object that contain the whole request message and parse it into 3 Variables 
@@ -11,7 +13,7 @@ class RequestHandler
 {
     public:
         RequestHandler();
-        RequestHandler(std::string);
+        RequestHandler(HttpRequest&);
         ~RequestHandler();
         
         void    buildResponse();
@@ -20,6 +22,7 @@ class RequestHandler
         size_t   getBodyLength();
 
     private:
+        HttpRequest _request;
         std::string _request_line[3];
         std::string _request_headers; // This is temp only, Later to be changed to something like map<Header_name, Header details>
         // std::map<std::string, std::string> _requset_heaeders;

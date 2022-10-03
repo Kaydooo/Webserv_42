@@ -7,22 +7,28 @@
 class Client
 {
     public:
-
         Client();
         ~Client();
-        void setSocket(int &);
-        void setAddress(sockaddr_in &);
 
-        int getSocket();
-        struct sockaddr_in getAddress();
-        void    feedData(char *, size_t);
-        
+        int                 getSocket();
+        struct sockaddr_in  getAddress();
+        HttpRequest         &getRequest();
+
+        void                setSocket(int &);
+        void                setAddress(sockaddr_in &);
+
+        void                feedData(char *, size_t);
+        bool                requestState();
+        bool                requestError();
+        bool                keepAlive();
+        void                clear();
+
+
     private:
-        int _client_socket;
-        struct sockaddr_in _client_address;
-        int _request_length;
-        HttpRequest _request;
-        
+        int                 _client_socket;
+        struct sockaddr_in  _client_address;
+        int                 _request_length;
+        HttpRequest         _request;
 };
 
 
