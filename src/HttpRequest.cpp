@@ -26,7 +26,7 @@ HttpRequest::~HttpRequest() {}
 
 /**
  
- * Checks if character ch is allowed to be in URI
+ * Checks if character is allowed to be in a URI
  * TODO:
  * - Add another argument to specify what part of URI to check for,
  *   Because different charsets are allowed for differnt parts of URI
@@ -41,7 +41,7 @@ bool    allowedURI(uint8_t ch)
 }
 
 /**
- 
+
 * Checks whether the character passed is allowed in a field name
 * Characters allowed as specifed in RFC:
 
@@ -528,6 +528,11 @@ void    HttpRequest::clear()
     _key_storage.clear();
 }
 
+/**
+
+ * Checks the value of header "Connection". If keep-alive, don't close the connection.
+
+**/
 bool        HttpRequest::keepAlive()
 {
     if (_request_headers.count("Connection"))
