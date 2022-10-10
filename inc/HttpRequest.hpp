@@ -43,10 +43,12 @@ enum ParsingState
     Parsing_Done
 };
 
-/* 
-    HttpRequest Class will be used to parase and store the request. 
-    It gets feeded with the request and will on a flag when parasing is finished.
-*/
+/** 
+ * 
+ * HttpRequest Class will be used to parase and store the request. 
+   It gets feeded with the request and will on a flag when parasing is finished.
+   
+**/
 class HttpRequest
 {
     public:
