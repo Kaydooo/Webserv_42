@@ -4,10 +4,16 @@ ServerManager::ServerManager() {}
 
 ServerManager::~ServerManager(){}
 
-void    ServerManager::setupServers()
+void    ServerManager::setupServers(std::vector<ServerConfig> servers)
 {
-    Server testServer; // later create servers here using info provided in config file.
-    _servers.push_back(testServer);
+    _servers = servers;
+
+    for(std::vector<ServerConfig>::iterator it = _servers.begin(); it != _servers.end(); ++it)
+    {
+        it->setupServer();
+        std::cout << "HEHE\n";
+    }
+	std::cout << "fd in server = " << _servers[0].getFd() << std::endl;
 }
 
 void    ServerManager::runServers()
@@ -30,27 +36,29 @@ void    ServerManager::runServers()
             if(FD_ISSET(i, &pool_cpy))
             {
                 if(_servers_map.count(i))
+                {
                     acceptNewConnection(_servers_map.find(i)->second);
+                }
                 else
                     handleRequest(i);
-
             }
         }
     }
 }
 
 
-void    ServerManager::acceptNewConnection(Server &serv)
+void    ServerManager::acceptNewConnection(ServerConfig &serv)
 {
     struct sockaddr_in client_address;
     long  client_address_size = sizeof(client_address);
     int client_sock;
-    Client  new_client;
+    Client  new_client(serv);
     
     if ( (client_sock = accept(serv.getFd(), (struct sockaddr *)&client_address,
      (socklen_t*)&client_address_size)) == -1)
     {
-        std::cerr << " webserv: accept error" << strerror(errno) <<std::endl;
+        std::cout << "fd = " << serv.getFd() << std::endl;
+        std::cerr << " webserv: accept error " << strerror(errno) <<std::endl;
         exit(EXIT_FAILURE);
     }
     FD_SET(client_sock, &_recv_fd_pool);
@@ -102,6 +110,9 @@ void    ServerManager::handleRequest(int &i)
     i << std::endl;
 
     bytes_read = read(i, buffer, sizeof(buffer));
+    if(bytes_read > 0)
+        std::cout << "------\n" << buffer << "\n------" << std::endl;
+    
     if(bytes_read < 0)
     {
         std::cerr << " webserv: read error" << strerror(errno) << std::endl;
@@ -111,7 +122,6 @@ void    ServerManager::handleRequest(int &i)
     {
         _clients_map[i].feedData(buffer, bytes_read);
         memset(buffer, 0, sizeof(buffer));
-        
     }
     if (_clients_map[i].requestError())
     {
@@ -124,12 +134,17 @@ void    ServerManager::handleRequest(int &i)
     }
     else if(_clients_map[i].requestState()) // 1 = parsing completed so we can work on the response.
     {
-        Response response(_clients_map[i].getRequest());
-        response.buildResponse();
-        send(i, response.getContent().c_str(), strlen(response.getContent().c_str()), 0);
-        send(i, response.getBody(), response.getBodyLength(), 0);
-        if(_clients_map[i].keepAlive() == 0 || response.getErrorCode())
+        _clients_map[i].buildResponse();
+        send(i, "HTTP/1.1 404 NotFound\r\n\r\n", 26, 0);
+        // send(i, _clients_map[i].getResponse(), _clients_map[i].getResponseLength(), 0);
+        // send(i, _clients_map[i].getResponseBody(), _clients_map[i].getResponseBodyLength(), 0);
+        std::cout << "Request Sent !!\n";
+        std::cout << "res = " << _clients_map[i].getResponse() << std::endl << " body = " << 
+        _clients_map[i].getResponseBody() << std::endl;
+
+        if(_clients_map[i].keepAlive() == 0 || _clients_map[i].badRequest())
         {
+            std::cout << "HEHEEE\n";
             FD_CLR(i, &_recv_fd_pool);
             close(i);
             _clients_map.erase(i);

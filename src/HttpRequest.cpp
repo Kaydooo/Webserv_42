@@ -78,7 +78,7 @@ void    HttpRequest::feed(char *data, size_t size)
                     _method = DELETE;
                 else
                 {    
-                    _error_code = 1;
+                    _error_code = 400;
                     std::cout << "Wrong Method" << std::endl;
                     return;
                 }
@@ -93,7 +93,7 @@ void    HttpRequest::feed(char *data, size_t size)
                 }
                 else
                 {
-                    _error_code = 1;
+                    _error_code = 400;
                     std::cout << "Wrong Method" << std::endl;
                     return;
                 }
@@ -108,7 +108,7 @@ void    HttpRequest::feed(char *data, size_t size)
             {
                 if (character != ' ')
                 {
-                    _error_code = 1;
+                    _error_code = 400;
                     std::cout << "Bad Character (Request_Line_First_Space)" << std::endl;
                     return;
                 }
@@ -119,7 +119,7 @@ void    HttpRequest::feed(char *data, size_t size)
             {
                 if (character == ' ' || character == '\r' || character == '\n')
                 {
-                    _error_code = 1;
+                    _error_code = 400;
                     std::cout << "Bad Character (Request_Line_First_Space)" << std::endl;
                     return;
                 }
@@ -130,7 +130,7 @@ void    HttpRequest::feed(char *data, size_t size)
                 }
                 else
                 {
-                    _error_code = 1;
+                    _error_code = 400;
                     std::cout << "Bad Character (Request_Line_First_Space)" << std::endl;
                     return;
                 }
@@ -161,7 +161,7 @@ void    HttpRequest::feed(char *data, size_t size)
                 }
                 else if (!allowedURI(character))
                 {
-                    _error_code = 1;
+                    _error_code = 400;
                     std::cout << "Bad Character (Request_Line_First_Space)" << std::endl;
                     return;
                 }
@@ -185,7 +185,7 @@ void    HttpRequest::feed(char *data, size_t size)
                 }
                 else if (!allowedURI(character))
                 {
-                    _error_code = 1;
+                    _error_code = 400;
                     std::cout << "Bad Character (Request_Line_First_Space)" << std::endl;
                     return;
                 }
@@ -202,7 +202,7 @@ void    HttpRequest::feed(char *data, size_t size)
                 }
                 else if (!allowedURI(character))
                 {
-                    _error_code = 1;
+                    _error_code = 400;
                     std::cout << "Bad Character (Request_Line_First_Space)" << std::endl;
                     return;
                 }
@@ -212,7 +212,7 @@ void    HttpRequest::feed(char *data, size_t size)
             {
                 if (character != 'H')
                 {
-                    _error_code = 1;
+                    _error_code = 400;
                     std::cout << "Bad Character (Request_Line_First_Space)" << std::endl;
                     return;
                 }
@@ -223,7 +223,7 @@ void    HttpRequest::feed(char *data, size_t size)
             {
                 if (character != 'T')
                 {
-                    _error_code = 1;
+                    _error_code = 400;
                     std::cout << "Bad Character (Request_Line_First_Space)" << std::endl;
                     return;
                 }
@@ -234,7 +234,7 @@ void    HttpRequest::feed(char *data, size_t size)
             {
                 if (character != 'T')
                 {
-                    _error_code = 1;
+                    _error_code = 400;
                     std::cout << "Bad Character (Request_Line_First_Space)" << std::endl;
                     return;
                 }
@@ -245,7 +245,7 @@ void    HttpRequest::feed(char *data, size_t size)
             {
                 if (character != 'P')
                 {
-                    _error_code = 1;
+                    _error_code = 400;
                     std::cout << "Bad Character (Request_Line_First_Space)" << std::endl;
                     return;
                 }
@@ -256,7 +256,7 @@ void    HttpRequest::feed(char *data, size_t size)
             {
                 if (character != '/')
                 {
-                    _error_code = 1;
+                    _error_code = 400;
                     std::cout << "Bad Character (Request_Line_First_Space)" << std::endl;
                     return;
                 }
@@ -267,7 +267,7 @@ void    HttpRequest::feed(char *data, size_t size)
             {
                 if (!isdigit(character))
                 {
-                    _error_code = 1;
+                    _error_code = 400;
                     std::cout << "Bad Character (Request_Line_First_Space)" << std::endl;
                     return;
                 }
@@ -280,7 +280,7 @@ void    HttpRequest::feed(char *data, size_t size)
             {
                 if (character != '.')
                 {
-                    _error_code = 1;
+                    _error_code = 400;
                     std::cout << "Bad Character (Request_Line_First_Space)" << std::endl;
                     return;
                 }
@@ -291,7 +291,7 @@ void    HttpRequest::feed(char *data, size_t size)
             {
                 if (!isdigit(character))
                 {
-                    _error_code = 1;
+                    _error_code = 400;
                     std::cout << "Bad Character (Request_Line_First_Space)" << std::endl;
                     return;
                 }
@@ -303,7 +303,7 @@ void    HttpRequest::feed(char *data, size_t size)
             {
                 if (character != '\r')
                 {
-                    _error_code = 1;
+                    _error_code = 400;
                     std::cout << "Bad Character (Request_Line_First_Space)" << std::endl;
                     return;
                 }
@@ -314,7 +314,7 @@ void    HttpRequest::feed(char *data, size_t size)
             {
                 if (character != '\n')
                 {
-                    _error_code = 1;
+                    _error_code = 400;
                     std::cout << "Bad Character (Request_Line_First_Space)" << std::endl;
                     return;
                 }
@@ -331,7 +331,7 @@ void    HttpRequest::feed(char *data, size_t size)
                     _state = Field_Name;
                 else
                 {
-                    _error_code = 1;
+                    _error_code = 400;
                     std::cout << "Bad Character (Request_Line_First_Space)" << std::endl;
                     return;
                 }
@@ -353,7 +353,7 @@ void    HttpRequest::feed(char *data, size_t size)
                 }
                 else
                 {
-                    _error_code = 1;
+                    _error_code = 400;
                     std::cout << "Bad Character (Request_Line_First_Space)" << std::endl;
                     return;
                 }
@@ -370,7 +370,7 @@ void    HttpRequest::feed(char *data, size_t size)
                 }
                 else if (!isToken(character))
                 {
-                    _error_code = 1;
+                    _error_code = 400;
                     std::cout << "Bad Character (Request_Line_First_Space)" << std::endl;
                     return;
                 }
@@ -400,7 +400,7 @@ void    HttpRequest::feed(char *data, size_t size)
                 }
                 else
                 {
-                    _error_code = 1;
+                    _error_code = 400;
                     std::cout << "Bad Character (Request_Line_First_Space)" << std::endl;
                     return;
                 }
@@ -516,6 +516,7 @@ int     HttpRequest::errorCode()
 void    HttpRequest::clear()
 {
     _path = "";
+    _error_code = 0;
     _query = "";
     _fragment = "";
     _method = NONE;
@@ -526,6 +527,7 @@ void    HttpRequest::clear()
     _body_done_flag = false;
     _storage.clear();
     _key_storage.clear();
+    _request_headers.clear();
 }
 
 /**

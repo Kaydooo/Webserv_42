@@ -19,6 +19,11 @@ class ServerConfig
 		std::map<short, std::string>	_error_pages;
 		std::vector<Location> 			_locations;
 
+        struct sockaddr_in _server_address;
+        int     			_listen_fd;
+
+
+
 	public:
 		ServerConfig();
 		~ServerConfig();
@@ -70,6 +75,10 @@ class ServerConfig
 				}
 				virtual ~ErrorException() throw() {}
 		};
+
+		void	setupServer();
+        int     getFd();
+
 };
 
 #endif

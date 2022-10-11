@@ -55,7 +55,7 @@ void    Response::buildResponse()
         addStatus();
         addHeaders();
     }
-    // Temp for testing only
+    // Temp for testing o nly
 }
 
 std::string Response::getContent() { return _response_content; }
@@ -72,9 +72,9 @@ void        Response::addStatus()
     _response_content.append("HTTP/1.1 200 OK\n");
 }
 
-size_t file_size(std::string file_path) 
+size_t Response::file_size(std::string file_path) 
 {
-    file_path = "server_dir" + file_path;
+    file_path = _server.getRoot() + file_path;
     FILE* fin = fopen(file_path.c_str(), "rb");
     if (fin == NULL) {
         std::cerr << " webserv: open error 1" << strerror(errno) << std::endl;
@@ -111,9 +111,9 @@ int     Response::readFile()
     _request_body = (char*) calloc(sizeof(char), _body_length);
 
     if (_request.getPath().compare("/") == 0)
-        file_fd = open("server_dir/home.html", O_RDONLY);
+        file_fd = open(_server.getIndex().c_str(), O_RDONLY);
     else
-        file_fd = open(("server_dir" + _request.getPath()).c_str(), O_RDONLY);
+        file_fd = open(( (_server.getRoot() + "/" + _request.getPath()) ).c_str(), O_RDONLY);
 
     if (file_fd < 0 )
     {
@@ -124,7 +124,9 @@ int     Response::readFile()
     bytes_read = read(file_fd, _request_body, _body_length);
     if(bytes_read < 0)
     {
-        std::cout << "read erro in file :|" << _request.getPath() << "|" << std::endl;
+        _response_content.append("HTTP/1.1 404 NotFound\r\n");
+
+        std::cout << "read erro in file :| " << _request.getPath() << "|" << std::endl;
         std::cerr << " webserv: read error *_*" << strerror(errno) << std::endl;
         return (0);
     }
@@ -135,4 +137,14 @@ int     Response::readFile()
 int      Response::getErrorCode()
 {
     return (_error_code);
+}
+
+void     Response::setServer(ServerConfig &server)
+{
+    _server = server;
+}
+
+void    Response::setRequest(HttpRequest &req)
+{
+    _request = req;
 }

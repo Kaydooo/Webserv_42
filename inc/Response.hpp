@@ -21,6 +21,10 @@ class Response
         char*    getBody();
         size_t   getBodyLength();
         int      getErrorCode();
+        void     setServer(ServerConfig &);
+        void     setRequest(HttpRequest &);
+        size_t   file_size(std::string);
+
 
 
     private:
@@ -33,6 +37,7 @@ class Response
         std::string _response_content;
         std::string _response_body;
         int         _error_code;
+        ServerConfig    _server;
 
         int    buildBody();
         void    addStatus();

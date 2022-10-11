@@ -8,6 +8,7 @@ ServerConfig::ServerConfig()
 	this->_root = "";
 	this->_client_max_body_size = 0;
 	this->_index = "";
+	this->_listen_fd = 0;
 	this->initErrorPages();
 }
 
@@ -26,6 +27,9 @@ ServerConfig::ServerConfig(const ServerConfig &other)
 		this->_index = other._index;
 		this->_error_pages = other._error_pages;
 		this->_locations = other._locations;
+		this->_listen_fd = other._listen_fd;
+		this->_server_address = other._server_address;
+
 	}
 	return ;
 }
@@ -43,6 +47,10 @@ ServerConfig &ServerConfig::operator=(const ServerConfig & rhs)
 		this->_index = rhs._index;
 		this->_error_pages = rhs._error_pages;
 		this->_locations = rhs._locations;
+		this->_listen_fd = rhs._listen_fd;
+		this->_server_address = rhs._server_address;
+
+
 	}
 	return (*this);
 }
@@ -393,3 +401,31 @@ bool ServerConfig::checkLocaitons() const
 	}
 	return (false);
 }
+
+
+void	ServerConfig::setupServer(void)
+{
+	if((_listen_fd = socket(AF_INET, SOCK_STREAM, 0) )  == -1 )
+    {
+        std::cerr << " webserv: socket error" << std::endl;
+        exit(EXIT_FAILURE);
+    }
+
+    int option_value = 1;
+    setsockopt(_listen_fd, SOL_SOCKET, SO_REUSEADDR, &option_value, sizeof(int));
+    
+    memset(&_server_address, 0, sizeof(_server_address));
+
+    _server_address.sin_family = AF_INET;
+    _server_address.sin_addr.s_addr = htonl(INADDR_ANY);
+    _server_address.sin_port = htons(_port);
+
+
+    if (bind(_listen_fd, (struct sockaddr *) &_server_address, sizeof(_server_address)) == -1)
+    {
+        std::cerr << "webserv: bind error" << std::endl;
+        exit(EXIT_FAILURE);
+    }
+}
+
+int   	ServerConfig::getFd() { return _listen_fd; }

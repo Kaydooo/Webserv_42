@@ -3,6 +3,8 @@
 
 #include "Webserv.hpp"
 #include "HttpRequest.hpp"
+#include "Response.hpp"
+
 
 /** 
  
@@ -16,6 +18,7 @@ class Client
 {
     public:
         Client();
+        Client(ServerConfig &);
         ~Client();
 
         int                 getSocket();
@@ -30,13 +33,23 @@ class Client
         bool                requestError();
         bool                keepAlive();
         void                clearForNextRequest();
+        void                buildResponse();
+        bool                badRequest();
+
+        const char         *getResponse();
+        size_t              getResponseLength();
+
+        char                *getResponseBody();
+        size_t              getResponseBodyLength();
+
 
 
     private:
         int                 _client_socket;
         struct sockaddr_in  _client_address;
-        int                 _request_length;
         HttpRequest         _request;
+        Response            _response;
+        ServerConfig        _server;
 };
 
 
