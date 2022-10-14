@@ -5,7 +5,6 @@
 #include "HttpRequest.hpp"
 #include "Response.hpp"
 
-
 /** 
  
    - Client Class Stores all information related to the client such as socket and address
@@ -36,13 +35,13 @@ class Client
         void                buildResponse();
         bool                badRequest();
 
-        const char         *getResponse();
+        std::string         getResponse();
         size_t              getResponseLength();
 
-        char                *getResponseBody();
+        const char         *getResponseBody();
         size_t              getResponseBodyLength();
-
-
+        void                clearResponse();
+        int                 responseCode();
 
     private:
         int                 _client_socket;

@@ -61,20 +61,22 @@ bool        Client::keepAlive()
 
 void        Client::buildResponse()
 {
+    _response.setRequest(_request);
     _response.buildResponse();
 }
 
-const char  *Client::getResponse()
+std::string Client::getResponse()
 {
-    return (_response.getContent().c_str());
+    return (_response.getContent());
 }
 
 size_t              Client::getResponseLength()
 {
+
     return (_response.getContent().length());
 }
 
-char                *Client::getResponseBody()
+const   char                *Client::getResponseBody()
 {
     return (_response.getBody());
 }
@@ -89,4 +91,14 @@ bool                Client::badRequest()
     if(_request.errorCode() == 400 || _request.errorCode() == 405) // add all errors that should close the connection here.
         return (true);
     return(false);
+}
+
+void                Client::clearResponse()
+{
+    _response.clearResponse();
+}
+
+int                 Client::responseCode()
+{
+    return (_response.getCode());
 }

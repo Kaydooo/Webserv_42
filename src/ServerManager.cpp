@@ -11,7 +11,6 @@ void    ServerManager::setupServers(std::vector<ServerConfig> servers)
     for(std::vector<ServerConfig>::iterator it = _servers.begin(); it != _servers.end(); ++it)
     {
         it->setupServer();
-        std::cout << "HEHE\n";
     }
 	std::cout << "fd in server = " << _servers[0].getFd() << std::endl;
 }
@@ -109,10 +108,35 @@ void    ServerManager::handleRequest(int &i)
     std::cout << "Message from: " << inet_ntoa(_clients_map[i].getAddress().sin_addr) << " Socket no : " <<
     i << std::endl;
 
+
+    // if(send(i, "", 0, 0) < 0)
+    //     std::cerr << "ERROR WRITEING TO SOCKET\n";
+    // int error = 0;
+    // socklen_t len = sizeof (error);
+    // int retval = getsockopt (i, SOL_SOCKET, SO_ERROR, &error, &len);
+    // if (retval != 0) {
+    // /* there was a problem getting the error code */
+    // std::cerr << "error getting socket error code: \n";
+    // FD_CLR(i, &_recv_fd_pool);
+    // close(i);
+    // _clients_map.erase(i);
+    // if(_clients.empty())
+    //     _biggest_fd = (--_servers_map.end())->first;
+    // return;
+    // }
+
+    // if (error != 0) {
+    //     /* socket has a non zero error status */
+    //     fprintf(stderr, "socket error: %s\n", strerror(error));
+    // FD_CLR(i, &_recv_fd_pool);
+    // close(i);
+    // _clients_map.erase(i);
+    // if(_clients.empty())
+    //     _biggest_fd = (--_servers_map.end())->first;
+    // }
+
+
     bytes_read = read(i, buffer, sizeof(buffer));
-    if(bytes_read > 0)
-        std::cout << "------\n" << buffer << "\n------" << std::endl;
-    
     if(bytes_read < 0)
     {
         std::cerr << " webserv: read error" << strerror(errno) << std::endl;
@@ -135,24 +159,18 @@ void    ServerManager::handleRequest(int &i)
     else if(_clients_map[i].requestState()) // 1 = parsing completed so we can work on the response.
     {
         _clients_map[i].buildResponse();
-        send(i, "HTTP/1.1 404 NotFound\r\n\r\n", 26, 0);
-        // send(i, _clients_map[i].getResponse(), _clients_map[i].getResponseLength(), 0);
-        // send(i, _clients_map[i].getResponseBody(), _clients_map[i].getResponseBodyLength(), 0);
-        std::cout << "Request Sent !!\n";
-        std::cout << "res = " << _clients_map[i].getResponse() << std::endl << " body = " << 
-        _clients_map[i].getResponseBody() << std::endl;
-
-        if(_clients_map[i].keepAlive() == 0 || _clients_map[i].badRequest())
+        send(i, _clients_map[i].getResponse().c_str(), _clients_map[i].getResponseLength(), 0);
+        send(i, _clients_map[i].getResponseBody(), _clients_map[i].getResponseBodyLength(), 0);
+        if(_clients_map[i].keepAlive() == false || _clients_map[i].responseCode() == 404)
         {
-            std::cout << "HEHEEE\n";
             FD_CLR(i, &_recv_fd_pool);
             close(i);
             _clients_map.erase(i);
             if(_clients.empty())
                 _biggest_fd = (--_servers_map.end())->first;
         }
-        else
-            _clients_map[i].clearForNextRequest();
+        _clients_map[i].clearForNextRequest();
+        _clients_map[i].clearResponse();
     }
 
 }
