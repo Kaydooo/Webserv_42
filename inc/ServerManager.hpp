@@ -32,7 +32,7 @@ class ServerManager
         void acceptNewConnection(ServerConfig &);
         void setupSelect();
         void handleRequest(int &);
-        void sendResponse(int i, HttpRequest& req);
+        void sendResponse(int &i);
         // int  checkServer(int &);
 
 };
