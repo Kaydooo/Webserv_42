@@ -4,20 +4,14 @@ Response::Response(){}
 
 Response::~Response(){}
 
-/* 
-  TODO: Request message to be parsed here.
-  Outcome:
-  1- string _request_line[3] filled with 1-Method 2-Path 3-HTTP Ver.
-  2- map<string, string> _request_headers filled with header titles and header info. as key/value.
-  3- string _response_body filled with request body (if expected).
-*/
-
 Response::Response(HttpRequest &req): _request(req), _code(0) {}
 
-/* 
-   Uses both request_line + request_headers to build the correct response.
-   Outcome: Build the response message that will be sent back to the client.
-*/
+void   Response::errResponse(short error_code)
+{
+    _target_file = _server.getErrorPages().at(error_code);
+    _code = error_code;
+    
+}
 
 void   Response::contentType()
 {
@@ -69,23 +63,21 @@ void    Response::constructTargetFile()
     if(!fileExists(_target_file))
     {
         _target_file = _server.getErrorPages().at(404);
-        std::cout << "err targer file = " << _target_file << std::endl;
+        // std::cout << "err targer file = " << _target_file << std::endl;
         _code = 404;
     }
-
         
 }
 
 void    Response::buildResponse()
 {
-    constructTargetFile();
-
+    if(_request.errorCode() == 0)
+        constructTargetFile();
     if(buildBody())
     {   
         addStatusLine();
         addHeaders();
     }
-    // Temp for testing o nly
 }
 
 std::string Response::getContent() const { return _response_content; }
@@ -97,7 +89,9 @@ void        Response::addStatusLine()
 {
     if(_code == 200)
         _response_content.append("HTTP/1.1 200 OK\r\n");
-    if(_code == 404)
+    else if(_code == 400)
+        _response_content.append("HTTP/1.1 400 BadRequest\r\n");   
+    else if(_code == 404)
         _response_content.append("HTTP/1.1 404 Not Found\r\n");
 
 }
@@ -158,7 +152,6 @@ int     Response::readFile()
         _code = 200;
     return (1);
 }
-
 
 int      Response::getErrorCode() const
 {

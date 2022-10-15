@@ -1,12 +1,13 @@
 # include "../inc/Client.hpp"
 
-Client::Client() {}
+Client::Client() : _total_bytes_read(0) {}
 
 Client::~Client() {}
 
-Client::Client(ServerConfig &server) 
+Client::Client(ServerConfig &server): _total_bytes_read(0)
 {
     _response.setServer(server);
+    _request.setMaxBodySize(_server.getClientMaxBodySize());
 }
 
 void    Client::setSocket(int &sock)
@@ -34,22 +35,27 @@ struct sockaddr_in    Client::getAddress()
     return (_client_address);
 }
 
+size_t      Client::getTotalBytes()
+{
+    return(_total_bytes_read);
+}
+
 void        Client::feedData(char *data, size_t size)
 {
     _request.feed(data, size);
 }
 
-bool        Client::requestState()
+bool        Client::parsingCompleted()
 {
     return (_request.parsingCompleted());
 }
 
-bool        Client::requestError()
+short       Client::requestError()
 {
     return (_request.errorCode());
 }
 
-void        Client::clearForNextRequest()
+void        Client::clearRequest()
 {
     _request.clear();
 }
@@ -65,40 +71,38 @@ void        Client::buildResponse()
     _response.buildResponse();
 }
 
-std::string Client::getResponse()
+std::string     Client::getResponse()
 {
     return (_response.getContent());
 }
 
-size_t              Client::getResponseLength()
+size_t          Client::getResponseLength()
 {
 
     return (_response.getContent().length());
 }
 
-const   char                *Client::getResponseBody()
+const   char    *Client::getResponseBody()
 {
     return (_response.getBody());
 }
 
-size_t              Client::getResponseBodyLength()
+size_t           Client::getResponseBodyLength()
 {
     return (_response.getBodyLength());
 }
 
-bool                Client::badRequest()
-{
-    if(_request.errorCode() == 400 || _request.errorCode() == 405) // add all errors that should close the connection here.
-        return (true);
-    return(false);
-}
-
-void                Client::clearResponse()
+void             Client::clearResponse()
 {
     _response.clearResponse();
 }
 
-int                 Client::responseCode()
+int              Client::getResponseCode()
 {
     return (_response.getCode());
+}
+
+void             Client::setRespError(short error_code)
+{
+    _response.errResponse(error_code);
 }

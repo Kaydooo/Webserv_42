@@ -1,8 +1,6 @@
 #ifndef WEBSERV_HPP
 # define WEBSERV_HPP
 
-#define TEST_PORT 8081
-
 # include <iostream>
 // # include <fstream>
 # include <fcntl.h>

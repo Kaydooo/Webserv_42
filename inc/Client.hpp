@@ -6,12 +6,9 @@
 #include "Response.hpp"
 
 /** 
- 
-   - Client Class Stores all information related to the client such as socket and address
-     along with request and response objects.
-   - requestState() + requestError() are used to check the request state. Once request parased and there are no errors,
-     response will then be built and sent to the client.
-
+     Client
+   - Stores all information related to the client such as socket and address
+     along with request and response objects. each Client also have an object of the server it's conntected to.
 **/
 class Client
 {
@@ -28,20 +25,21 @@ class Client
         void                setAddress(sockaddr_in &);
 
         void                feedData(char *, size_t);
-        bool                requestState();
-        bool                requestError();
+        bool                parsingCompleted();
+        short               requestError();
         bool                keepAlive();
-        void                clearForNextRequest();
+        void                clearRequest();
         void                buildResponse();
-        bool                badRequest();
 
         std::string         getResponse();
         size_t              getResponseLength();
-
+        size_t              getTotalBytes();    
         const char         *getResponseBody();
         size_t              getResponseBodyLength();
         void                clearResponse();
-        int                 responseCode();
+        int                 getResponseCode();
+        void                setRespError(short);
+
 
     private:
         int                 _client_socket;
@@ -49,6 +47,7 @@ class Client
         HttpRequest         _request;
         Response            _response;
         ServerConfig        _server;
+        size_t              _total_bytes_read;
 };
 
 

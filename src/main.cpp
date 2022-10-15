@@ -16,7 +16,6 @@ int main(int argc, char **argv) {
 			master.setupServers(cluster.getServers());
         	master.runServers();
 
-			//runServers();
 		}
 		catch (std::exception &e) {
 			std::cerr << e.what() << std::endl;

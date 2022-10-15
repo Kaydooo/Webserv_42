@@ -23,10 +23,14 @@ class Response
         size_t      getBodyLength() const;
         int         getErrorCode() const;
         int         getCode() const;
+
         void        setRequest(HttpRequest &);
         void        setServer(ServerConfig &);
+        
         void        buildResponse();
         void        clearResponse();
+        void        errResponse(short error_code);
+
 
 
 

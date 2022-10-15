@@ -408,8 +408,14 @@ void    HttpRequest::feed(char *data, size_t size)
             }
             case Message_Body:
             {
-                if(_body.size() < _body_length)
+                if(_body.size() < _body_length )
                     _body.push_back(character);
+                else if (_body.size() > _max_body_size)
+                {
+                    _error_code = 400;
+                    return;
+                }
+                
                 else
                 {
                     _body_done_flag = true;
@@ -459,6 +465,11 @@ std::string &HttpRequest::getFragment()
 void    HttpRequest::setMethod(HttpMethod & method)
 {
     _method = method;
+}
+
+void    HttpRequest::setMaxBodySize(size_t size)
+{
+    _max_body_size = size;
 }
 
 void    HttpRequest::setHeader(std::string name, std::string value) 
@@ -513,6 +524,7 @@ int     HttpRequest::errorCode()
     return(_error_code);
 }
 
+/* Clears all object variables and become ready to hold next request */
 void    HttpRequest::clear()
 {
     _path = "";

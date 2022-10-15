@@ -39,7 +39,6 @@ CgiHandler &CgiHandler::operator=(const CgiHandler &rhs)
 	return (*this);
 }
 
-
 /*Set functions */
 
 void CgiHandler::setCgiPid(pid_t cgi_pid) 
