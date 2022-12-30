@@ -1,8 +1,29 @@
-# Webserv:  HTTP server in C++ 98 
+# Webserv:  42 School Project
+
+## About
 This project was completed as part of a 42 core curriculum. it was done with [Anastasiia-Ni](https://github.com/Anastasiia-Ni) & [AhmadMHammoudeh](https://github.com/AhmadMHammoudeh)
 
 The goal of the project is to build a C++98 compatible HTTP web server from scratch.
 The web server can handle HTTP GET, HEAD, POST, PUT, and DELETE Requests, and can serve static files from a specified root directory or dynamic content using CGI. It is also able to handle multiple client connections concurrently with the help of select().
+
+
+
+
+
+
+[Usage](#usage)
+
+[Introduction](#introduction)
+
+[Parts of a web server](#parts-of-a-web-server)
+  * [Server Core](#server-core)
+  * [Request Parser](#request-parser)
+  * [Response Builder](#response-builder)
+  * [Configuration File](#configuration-file)
+  * [CGI](#cgi)
+  
+[Resources](#resources)
+
 
 # Usage
 ```
@@ -11,21 +32,6 @@ make
 ```
 Configuration File
 CGI (Common Gateway Interface)
-
-# Table of Contents
-
-- [Usage](#usage)
-- [Introduction](#introduction)
-- [Parts of a web server](#parts-of-a-web-server)
-  * [Server Core](#server-core)
-  * [Request Parser](#request-parser)
-  * [Response Builder](#response-builder)
-  * [Configuration File](#configuration-file)
-  * [CGI](#cgi)
-- [Resources](#resources)
-
-<small><i><a href='http://ecotrust-canada.github.io/markdown-toc/'>Table of contents generated with markdown-toc</a></i></small>
-
 
 # Introduction
 
@@ -202,16 +208,17 @@ __Networking__
 - [Create a simple HTTP server in c](https://medium.com/from-the-scratch/http-server-what-do-you-need-to-know-to-build-a-simple-http-server-from-scratch-d1ef8945e4fa)
 - [(Video) Create a simple web server in c](https://www.youtube.com/watch?v=esXw4bdaZkc&ab_channel=JacobSorber)
 - [(Video) explaining select()](https://www.youtube.com/watch?v=Y6pFtgRdUts&ab_channel=JacobSorber)
-- [TCP Socket Programming: HTTP](https://w3.cs.jmu.edu/kirkpams/OpenCSF/Books/csf/html/TCPSockets.html)
+- [IBM - Nonblocking I/O and select()](https://www.ibm.com/support/knowledgecenter/ssw_ibm_i_72/rzab6/xnonblock.htm)
 - [All about sockets blocking](http://dwise1.net/pgm/sockets/blocking.html)
+- [TCP Socket Programming: HTTP](https://w3.cs.jmu.edu/kirkpams/OpenCSF/Books/csf/html/TCPSockets.html)
 - [Beej's Guide to Network Programming](https://beej.us/guide/bgnet/)
 
 __HTTP__
-- [https://developer.mozilla.org/en-US/docs/Web/HTTP](https://developer.mozilla.org/en-US/docs/Web/HTTP)
+- [MDN - HTTP](https://developer.mozilla.org/en-US/docs/Web/HTTP)
 - [An Overview of the HTTP as Coverd in RFCs](https://www.inspirisys.com/HTTP_Protocol_as_covered_in_RFCs-An_Overview.pdf)
+- [How the web works: HTTP and CGI explained](https://www.garshol.priv.no/download/text/http-tut.html)
 - [MIME](https://developer.mozilla.org/en-US/docs/Web/HTTP/Basics_of_HTTP/MIME_types)
 - [HTTP Status Codes](https://umbraco.com/knowledge-base/http-status-codes/)
-- [How the web works: HTTP and CGI explained](https://www.garshol.priv.no/download/text/http-tut.html)
 
 __RFC__
 - [How to Read an RFC](https://www.tutorialspoint.com/cplusplus/cpp_web_programming.htm)
@@ -223,9 +230,9 @@ __RFC__
 - [RFC 3875 - CGI](https://datatracker.ietf.org/doc/html/rfc3875)
 
 __CGI__
-- [(Video) Creating a file upload page](https://www.youtube.com/watch?v=_j5spdsJdV8&t=562s)
-- [CPP web Programming](https://www.tutorialspoint.com/cplusplus/cpp_web_programming.htm)
 - [Python web Programming](https://www.tutorialspoint.com/python/python_cgi_programming.htm)
+- [CPP web Programming](https://www.tutorialspoint.com/cplusplus/cpp_web_programming.htm)
+- [(Video) Creating a file upload page](https://www.youtube.com/watch?v=_j5spdsJdV8&t=562s)
 
 __StackOverFlow__
 - [What HTTP response headers are required](https://stackoverflow.com/questions/4726515/what-http-response-headers-are-required)
