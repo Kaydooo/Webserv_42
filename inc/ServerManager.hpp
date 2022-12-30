@@ -1,4 +1,4 @@
-                                                           #ifndef SERVERMANAGER_HPP
+#ifndef SERVERMANAGER_HPP
 # define SERVERMANAGER_HPP
 
 #include "Webserv.hpp"
@@ -28,10 +28,17 @@ class ServerManager
         int        _biggest_fd;
 
         void acceptNewConnection(ServerConfig &);
-        void setupSelect();
-        void readRequest(int &);
-        void sendResponse(int &i);
-
+        void checkTimeout();
+        void initializeSets();
+        void readRequest(const int &, Client &);
+        void handleReqBody(Client &);
+        void sendResponse(const int &, Client &);
+        void sendCgiBody(Client &, CgiHandler &);
+        void readCgiResponse(Client &, CgiHandler &);
+        void closeConnection(const int);
+        void assignServer(Client &);
+        void addToSet(const int , fd_set &);
+        void removeFromSet(const int , fd_set &);
 };
 
 

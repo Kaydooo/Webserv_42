@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <link rel="stylesheet" href="assets/css/style.css">
+    <link rel="stylesheet" href="assets/css/serv.css">
+    <link href="https://fonts.googleapis.com/css2?family=Kaushan+Script&family=Montserrat:wght@400;700&display=swap" rel="stylesheet">
+    <title>Fusion</title>
+    <!-- <script>
+        if (window.history.replaceState) {
+            window.history.replaceState(null, null, window.location.href);  //
+        }
+    </script> -->
+</head>
+<body>
+
+<header class="header">
+    <div class="container">
+        <div class ="header__inner">
+            <a class = "nav__link__dop" href="tours/tours.html">Tour</a>
+            <nav class="nav">
+                <a class="nav__link__dop" href="index.html">Home</a>
+                <a class="nav__link__dop" href="services.html">Services</a>
+                <a class="nav__link__dop" href="about.html">About</a>
+                <a class="nav__link__dop" href="contact.html">Contact</a>
+                <a class="nav__link__dop" href="cookies.html">Cookies Test</a>
+                <a class="nav__link__dop" href="/cgi-bin/acc.py">Account</a>                   
+            </nav>
+        </div>
+    </div>
+</header>
+
+<div class="sub_div">
+    <h1 id="header"></h1>
+    <script>
+        function setAction(form, name){
+            document.cookie = "user=" + name;
+        }
+        const value = `${document.cookie}`;
+        const parts = value.split("=");
+        document.getElementById("header").innerHTML = "Welcome " + (parts[parts.indexOf("user") + 1] ? parts[parts.indexOf("user") + 1] : "to webserver");
+    </script>
+    <br>
+    <form method="get" onsubmit="return setAction(this, document.getElementById('nameForm').value)">
+        Name: <input id="nameForm" type="text" name="user">
+        <input type="submit" value="OK">
+    </form>
+    
+    <br>
+	<form enctype="multipart/form-data" action = "../cgi-bin/upload.py" method="post" >
+        <p>File: <input type="file" name="filename" id="fileid" class="form-control">
+            <input type="submit" value="SEND" href="#"></p>
+    </form>
+
+    <br>
+
+</div>
+
+    <footer>
+        <p><span class="sight">Thank you for using AMANIX</p>
+    </footer>
+
+</body>
+</html>

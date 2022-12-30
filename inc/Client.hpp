@@ -5,7 +5,7 @@
 #include "HttpRequest.hpp"
 #include "Response.hpp"
 
-/** 
+/**
      Client
    - Stores all information related to the client such as socket and address
      along with request and response objects. each Client also have an object of the server it's conntected to.
@@ -14,40 +14,30 @@ class Client
 {
     public:
         Client();
+        Client(const Client &other);
         Client(ServerConfig &);
+		    Client &operator=(const Client & rhs);
         ~Client();
 
-        int                 getSocket();
-        struct sockaddr_in  getAddress();
-        HttpRequest         &getRequest();
+        const int                 &getSocket() const;
+        const struct sockaddr_in  &getAddress() const;
+        const HttpRequest         &getRequest() const;
+        const time_t              &getLastTime() const;
 
         void                setSocket(int &);
         void                setAddress(sockaddr_in &);
-
-        void                feedData(char *, size_t);
-        bool                parsingCompleted();
-        short               requestError();
-        bool                keepAlive();
-        void                clearRequest();
+        void                setServer(ServerConfig &);
         void                buildResponse();
+        void                updateTime();
 
-        std::string         getResponse();
-        size_t              getResponseLength();
-        size_t              getTotalBytes();    
-        const char         *getResponseBody();
-        size_t              getResponseBodyLength();
-        void                clearResponse();
-        int                 getResponseCode();
-        void                setRespError(short);
-
-
+        void                clearClient();
+        Response            response;
+        HttpRequest         request;
+        ServerConfig        server;
     private:
         int                 _client_socket;
         struct sockaddr_in  _client_address;
-        HttpRequest         _request;
-        Response            _response;
-        ServerConfig        _server;
-        size_t              _total_bytes_read;
+        time_t              _last_msg_time;
 };
 
 

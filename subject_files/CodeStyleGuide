@@ -5,14 +5,16 @@ something like a norminet for the project
    briefly describing what is happening below.
 
 2. Class name format: 
-   class HttpRequest {
+   class HttpRequest 
+   {
 
    };
 
 3. Functions name format: 
    countingVariable()
 
-   bool isDigits(std::string const &str) {
+   bool isDigits(std::string const &str) 
+   {
 	   return (str.find_first_not_of("0123456789") == std::string::npos);
    }
 

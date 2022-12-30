@@ -1,30 +1,36 @@
 #include "../inc/Webserv.hpp"
 #include "../inc/ServerManager.hpp"
 
-int main(int argc, char **argv) {
+void sigpipeHandle(int sig) { if(sig) {}}
+
+int main(int argc, char **argv) 
+{
 	if (argc == 1 || argc == 2) {
-		try {
+		try 
+		{
 			std::string		config;
 			ConfigParser	cluster;
         	ServerManager 	master;
-			
 
+
+			signal(SIGPIPE, sigpipeHandle);
 			/* configuration file as argument or default path */
-			config = (argc == 1 ? "default.conf" : argv[1]);
+			config = (argc == 1 ? "configs/default.conf" : argv[1]);
 			cluster.createCluster(config);
 			// cluster.print(); // for checking
 			master.setupServers(cluster.getServers());
-        	master.runServers();
-
+			master.runServers();
 		}
 		catch (std::exception &e) {
 			std::cerr << e.what() << std::endl;
 			return (1);
 		}
     }
-    else {
-		std::cout << "error: wrong arguments" << std::endl;
+    else 
+	{
+		Logger::logMsg(ERROR, CONSOLE_OUTPUT, "Error: wrong arguments");
 		return (1);
 	}
     return (0);
 }
+

@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <link rel="stylesheet" href="assets/css/style.css">
+        <link rel="stylesheet" href="assets/css/password.css">
+        <link href="https://fonts.googleapis.com/css2?family=Kaushan+Script&family=Montserrat:wght@400;700&display=swap" rel="stylesheet">
+        <script src="assets/js/password.js"></script>
+		<title>Fusion</title>
+	</head>
+
+	<body>
+		<header class="header">
+			<div class="container">
+				<div class ="header__inner">
+					<a class = "nav__link__dop" href="tours/tours.html">Tour</a>
+					<nav class="nav">
+						<a class="nav__link__dop" href="index.html">Home</a>
+						<a class="nav__link__dop" href="services.html">Services</a>
+						<a class="nav__link__dop" href="about.html">About</a>
+						<a class="nav__link__dop" href="contact.html">Contact</a>
+                        <a class="nav__link__dop" href="cookies.html">Cookies Test</a>
+                        <a class="nav__link__dop" href="/cgi-bin/acc.py">Account</a>                          
+					</nav>
+				</div>
+			</div>
+		</header>
+
+
+		<div class="pass__block">
+		<h1> CGI: </h1> <br />
+    <form action = "../cgi-bin/get_hello.py" method = "get">
+        First Name: <input type = "text" name = "first_name">  <br />
+        <br>
+        Last Name: <input type = "text" name = "last_name" />
+        <input type = "submit" value = "Submit" /> <br />
+    </form>
+
+    <br />
+    <br />
+    <br />
+    <br />
+    <h2> Smart calculator: </h2> <br />
+    <form action = "../cgi-bin/calc.py" method = "get">
+        Number1: <input type = "text" name = "f_num">  <br />
+        <br>
+        Oparator : <input type = "text" name = "oper">  <br />
+        <br>
+        Number2: <input type = "text" name = "s_num" />
+        <input type = "submit" value = "Submit" /> <br />
+    </form>
+    <!-- <div class = "text__pass">
+        Enter you secret words:
+    </div>
+    <form action="">
+        <input type="password" onkeyup="password_length(event);">
+        <div class="bar_container">
+            <div id="password-length"></div>
+        </div>
+    </form> -->
+    <ul>
+        <li>
+            <div class="litera">A M A N I X</div>
+        </li>
+    </ul>
+</div>
+
+
+</body>
+</html>

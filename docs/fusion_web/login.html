@@ -1,0 +1,23 @@
+<!DOCTYPE html> 
+<html> 
+<head>
+    <meta charset="UTF-8" name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" href="assets/css/accstyle.css">
+    <title> Login Page </title>
+</head>
+<body>  
+    <center> <h1> Amanix Login Form </h1> </center> 
+    <form action = "../cgi-bin/acc.py" method = "get">
+        <div class="container"> 
+            <label>Username : </label> 
+            <input type="text" placeholder="Enter Username" name="username" required>
+            <label>Password : </label> 
+            <input type="password" placeholder="Enter Password" name="password" required>
+            <button type="submit">Login</button> 
+            No Account?<a href="/register.html"> Register Here </a> 
+        </div> 
+    </form>   
+</body>   
+</html>
+
+ 

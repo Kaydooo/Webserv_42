@@ -11,18 +11,16 @@ class ServerConfig
 {
 	private:
 		uint16_t						_port;
-		in_addr_t						_host; //in_addr_t//from #include <machine/types.h>  base type of internet address
+		in_addr_t						_host;
 		std::string						_server_name;
 		std::string						_root;
 		unsigned long					_client_max_body_size;
 		std::string						_index;
+		bool							_autoindex;
 		std::map<short, std::string>	_error_pages;
 		std::vector<Location> 			_locations;
-
-        struct sockaddr_in _server_address;
-        int     			_listen_fd;
-
-
+        struct sockaddr_in 				_server_address;
+        int     						_listen_fd;
 
 	public:
 		ServerConfig();
@@ -35,14 +33,16 @@ class ServerConfig
 		void setServerName(std::string server_name);
 		void setHost(std::string parametr);
 		void setRoot(std::string root);
+		void setFd(int);
 		void setPort(std::string parametr);
 		void setClientMaxBodySize(std::string parametr);
 		void setErrorPages(std::vector<std::string> &parametr);
 		void setIndex(std::string index);
 		void setLocation(std::string nameLocation, std::vector<std::string> parametr);
+		void setAutoindex(std::string autoindex);
 
 		bool isValidHost(std::string host) const;
-		bool isValidErrorPages() const;
+		bool isValidErrorPages();
 		int isValidLocation(Location &location) const;
 
 		const std::string &getServerName();
@@ -53,6 +53,7 @@ class ServerConfig
 		const std::string &getRoot();
 		const std::map<short, std::string> &getErrorPages();
 		const std::string &getIndex();
+		const bool &getAutoindex();
 		const std::string &getPathErrorPage(short key);
 		const std::vector<Location>::iterator getLocationKey(std::string key);
 

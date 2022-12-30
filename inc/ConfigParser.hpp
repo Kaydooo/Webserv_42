@@ -3,8 +3,6 @@
 
 #include "Webserv.hpp"
 
-#define WHITESPACE "\t\n\v\f\r "
-
 class ServerConfig;
 
 class ConfigParser {

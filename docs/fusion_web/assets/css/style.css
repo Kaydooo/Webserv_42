@@ -1,0 +1,282 @@
+html {
+    height: 100%;
+}
+body {
+    height: 100%;
+    margin: 0;
+    font-family: 'Montserrat', sans-serif;   
+    font-size: 15px;
+    line-height: 1.6;
+    color: #333;
+    display: flex;
+    align-items: center;
+}
+
+*,
+*:before,
+*:after {
+    box-sizing: border-box;
+}
+
+h1, h2, h3, h4, h5, h6 {
+    margin: 0;
+}
+
+/*Container*/
+.container {
+    width: 100%;
+    max-width: 1200px;
+    margin: 0 auto;
+}
+
+/*Intro*/
+.intro {
+    display:flex;
+
+
+    flex-direction: column;
+    justify-content: flex-end;
+    width: 100%;
+    height: 100vh;
+    background: url(../images/Desert_UAE.jpeg) center no-repeat;
+    background-size: cover;
+}
+
+.intro__inner
+{
+    width: 100%;
+    max-width: 880px;
+    margin: 0 auto;
+    text-align: center;
+}
+
+.intro__title {
+    font-size: 80px;
+    font-weight: 700;
+    height: 65vh;
+    text-transform: uppercase;
+    color: white;
+    text-align: center;
+    line-height: 1;
+}
+
+.inner__uptitle {
+    font-size: 48px;
+    color: white;
+    font-family: 'Kaushan Script', cursive;
+    text-align: center;
+    margin-bottom: 20px;
+}
+
+/*Header*/
+.header {
+    display: block;
+    width: 100%;
+    padding-top: 30px;
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    z-index: 1000;
+}
+
+.header__inner {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+
+    font-weight: 700;
+    font-size: 24px;
+    text-transform: uppercase;
+}
+
+.header__inner:hover {
+    color: #fce38a;
+}
+
+.header__inner:hover::after {
+    display: block;
+    opacity: 1;
+} 
+
+/*Navigation button*/
+.nav {
+    font-size: 14px;
+    text-transform: uppercase;
+}
+
+.nav__link {
+    display: inline-block;
+    vertical-align: top;
+    margin: 0 24px;
+    position: relative;
+    color: white;
+    text-decoration: none;
+    transition: color .2s linear;
+}
+
+.nav__link:after {
+    content: "";
+    display: block;
+    width: 100%;
+    height: 2px;
+    display: none;
+    
+    background-color: #fce38a;
+    opacity: 0;
+    position: absolute;
+    top: 100%;
+    left: 0;
+    z-index: 1;
+    
+    transition: opacity .2s linear;
+}
+
+.nav__link:hover {
+    color: #fce38a;
+}
+
+.nav__link:hover::after {
+    display: block;
+    opacity: 1;
+}
+
+.nav__link__dop {
+    display: inline-block;
+    vertical-align: top;
+    margin: 0 24px;
+    position: relative;
+    color: black;
+    text-decoration: none;
+    transition: color .2s linear;
+}
+
+.nav__link__dop:after {
+    content: "";
+    display: block;
+    width: 100%;
+    height: 2px;
+    display: none;
+    
+    background-color: #333;
+    opacity: 0;
+    position: absolute;
+    top: 100%;
+    left: 0;
+    z-index: 1;
+    
+    transition: opacity .2s linear;
+}
+
+.nav__link__dop:hover {
+    color: #333;
+}
+
+.nav__link__dop:hover::after {
+    display: block;
+    opacity: 1;
+}
+
+/*Trademark*/
+.highlight {
+    color: white;
+    display: flex;
+    margin-top: 200px;
+    font-size: 16px;
+    margin: 0 auto;
+}
+
+/* knopka 
+
+.button {
+    display: inline-block;
+    vertical-align: top;
+    padding: 8px 30px;
+    border: 3px solid white;
+    color: white;
+    text-transform: uppercase;
+    font-size: 14px;
+    font-weight: 700;
+    text-decoration: none;
+    transition: background .1s linear, color .1s linear;
+}
+
+.button:hover {
+    background-color: white;
+    color: #333;
+
+} */
+
+/*slides*/
+.slides {
+    display: flex;
+    width: 90vw;
+}
+
+.panel {
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+    height: 80vh;
+    border-radius: 50px;
+    color: #fff;
+    cursor: pointer;
+    flex: 0.5;
+    margin: 10px;
+    position: relative;
+    -webkit-transition: all 700ms easy-in;
+}
+
+.panel h3 {
+    font-size: 24px;
+    position: absolute;
+    bottom: 20px;
+    left: 20px;
+    margin: 0;
+    opacity: 0;
+}
+
+.panel.active {
+    flex: 5;
+}
+
+.panel.active h3 {
+    opacity: 1;
+    transition: opacity 0.3s ease-in 0.4s;
+}
+
+
+/* about */
+
+.cont__title {
+    width: 850px;
+    height: 250px;
+    position: absolute;
+    top: 0;
+    right: 0;
+    bottom: 40%;
+    left: 0;
+    margin: auto; 
+}
+.titles__inner {
+    padding: 10px 20px;
+    /* background-color: red; */
+    text-align: center;
+}
+
+.text__about {
+    padding: 10px 20px;
+    text-align: center;
+}
+
+/* poloska */
+
+.titles__inner:after {
+    content: "";
+    display: block;
+    width: 60px;
+    height: 3px;
+    background-color: #333;
+    margin: 10px auto 0;
+}
+

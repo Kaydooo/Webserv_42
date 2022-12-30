@@ -3,40 +3,47 @@
 
 #include "Webserv.hpp"
 
+class HttpRequest;
 class CgiHandler {
 	private:
 		std::map<std::string, std::string>	_env;
-		char**								_cenv;
+		char**								_ch_env;
+		char**								_argv;
+		int									_exit_status;
 		std::string							_cgi_path;
 		pid_t								_cgi_pid;
-		int									_request_pipe;
-		int									_response_pipe;
-		int									_exit_status;
 
 	public:
+		int	pipe_in[2];
+		int	pipe_out[2];
+
 		CgiHandler();
+		CgiHandler(std::string path);
 		~CgiHandler();
 		CgiHandler(CgiHandler const &other);
 		CgiHandler &operator=(CgiHandler const &rhs);
 
+		void initEnv(HttpRequest& req, const std::vector<Location>::iterator it_loc);
+		void initEnvCgi(HttpRequest& req, const std::vector<Location>::iterator it_loc);
+		void execute(short &error_code);
+		void sendHeaderBody(int &pipe_out, int &fd, std::string &);
+		void fixHeader(std::string &header);
+		void clear();
+		std::string setCookie(const std::string& str);
+
 		void setCgiPid(pid_t cgi_pid);
 		void setCgiPath(const std::string &cgi_path);
-		void setRequestPipe(int request_pipe);
-		void setResponsePipe(int response_pipe);
-		
+
 		const std::map<std::string, std::string> &getEnv() const;
-		const pid_t getCgiPid() const;
+		const pid_t &getCgiPid() const;
 		const std::string &getCgiPath() const;
-		const int getRequestPipe() const;
-		const int getResponsePipe() const;
 
 		std::string	getAfter(const std::string& path, char delim);
 		std::string	getBefore(const std::string& path, char delim);
-		std::string	decode(std::string& path);
-		std::string	setCookie(const std::string& str);
+		std::string	getPathInfo(std::string& path, std::vector<std::string> extensions);
 		int	countCookies(const std::string& str);
-
+		int findStart(const std::string path, const std::string delim);
+		std::string decode(std::string &path);
 };
-
 
 #endif

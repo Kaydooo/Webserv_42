@@ -1,13 +1,48 @@
 # include "../inc/Client.hpp"
 
-Client::Client() : _total_bytes_read(0) {}
+Client::Client()
+{
+    _last_msg_time = time(NULL);
+}
 
 Client::~Client() {}
 
-Client::Client(ServerConfig &server): _total_bytes_read(0)
+/* Copy constructor */
+Client::Client(const Client &other)
 {
-    _response.setServer(server);
-    _request.setMaxBodySize(_server.getClientMaxBodySize());
+	if (this != &other)
+	{
+		this->_client_socket = other._client_socket;
+		this->_client_address = other._client_address;
+		this->request = other.request;
+		this->response = other.response;
+		this->server = other.server;
+		this->_last_msg_time = other._last_msg_time;
+
+	}
+	return ;
+}
+
+/* Assinment operator */
+Client &Client::operator=(const Client & rhs)
+{
+	if (this != &rhs)
+	{
+		this->_client_socket = rhs._client_socket;
+		this->_client_address = rhs._client_address;
+		this->request = rhs.request;
+		this->response = rhs.response;
+		this->server = rhs.server;
+		this->_last_msg_time = rhs._last_msg_time;
+	}
+	return (*this);
+}
+
+Client::Client(ServerConfig &server)
+{
+    setServer(server);
+    request.setMaxBodySize(server.getClientMaxBodySize());
+    _last_msg_time = time(NULL);
 }
 
 void    Client::setSocket(int &sock)
@@ -20,89 +55,46 @@ void    Client::setAddress(sockaddr_in &addr)
     _client_address =  addr;
 }
 
-int     Client::getSocket()
+void    Client::setServer(ServerConfig &server)
+{
+    response.setServer(server);
+}
+
+
+const int     &Client::getSocket() const
 {
     return (_client_socket);
 }
 
-HttpRequest     &Client::getRequest()
+const HttpRequest   &Client::getRequest() const
 {
-    return (_request);
+    return (request);
 }
 
-struct sockaddr_in    Client::getAddress()
+const struct sockaddr_in    &Client::getAddress() const
 {
     return (_client_address);
 }
 
-size_t      Client::getTotalBytes()
+const time_t     &Client::getLastTime() const
 {
-    return(_total_bytes_read);
+    return (_last_msg_time);
 }
 
-void        Client::feedData(char *data, size_t size)
-{
-    _request.feed(data, size);
-}
-
-bool        Client::parsingCompleted()
-{
-    return (_request.parsingCompleted());
-}
-
-short       Client::requestError()
-{
-    return (_request.errorCode());
-}
-
-void        Client::clearRequest()
-{
-    _request.clear();
-}
-
-bool        Client::keepAlive()
-{
-    return (_request.keepAlive());
-}
 
 void        Client::buildResponse()
 {
-    _response.setRequest(_request);
-    _response.buildResponse();
+    response.setRequest(this->request);
+    response.buildResponse();
 }
 
-std::string     Client::getResponse()
+void             Client::updateTime()
 {
-    return (_response.getContent());
+    _last_msg_time = time(NULL);
 }
 
-size_t          Client::getResponseLength()
+void             Client::clearClient()
 {
-
-    return (_response.getContent().length());
-}
-
-const   char    *Client::getResponseBody()
-{
-    return (_response.getBody());
-}
-
-size_t           Client::getResponseBodyLength()
-{
-    return (_response.getBodyLength());
-}
-
-void             Client::clearResponse()
-{
-    _response.clearResponse();
-}
-
-int              Client::getResponseCode()
-{
-    return (_response.getCode());
-}
-
-void             Client::setRespError(short error_code)
-{
-    _response.errResponse(error_code);
+    response.clear();
+    request.clear();
 }
