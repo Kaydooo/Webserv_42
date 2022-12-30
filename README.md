@@ -91,7 +91,7 @@ Headers contain additional information about the response, such as the type and 
 __HTTP Methods__
 
 |Method|Description|Possible Body|
-|----|----|:----:|
+|:----|----|:----:|
 |**`GET`** | Retrieve a specific resource or a collection of resources, should not affect the data/resource| No|
 |**`POST`** | Perform resource-specific processing on the request content| Yes|
 |**`DELETE`** | Removes target resource given by a URI| Yes|
