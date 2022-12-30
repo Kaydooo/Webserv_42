@@ -77,6 +77,19 @@ Headers contain additional information about the response, such as the type and 
 |**PUT** | Creates a new resource with data from message body, if resource already exist, update it with data in body | Yes|
 |**HEAD** | Same as GET, but do not transfer the response content  | No|
 
+### __GET__
+HTTP GET method is used to read (or retrieve) a representation of a resource. In case of success (or non-error), GET returns a representation of the resource in response body and HTTP response status code of 200 (OK). In an error case, it most often returns a 404 (NOT FOUND) or 400 (BAD REQUEST).
+
+### __POST__
+HTTP POST method is most often utilized to create new resources. On successful creation, HTTP response code 201 (Created) is returned.
+
+### __DELETE__
+HTTP DELETE is stright forward. It deletes a resource specified in URI. On successful deletion, it returns HTTP response status code 204 (No Content).
+
+<br>
+
+Read more about HTTP methods [RFC9110#9.1](https://www.rfc-editor.org/rfc/rfc9110.html#name-methods)
+<br>
 
 # Parts of a web server
 
@@ -115,8 +128,7 @@ For example, if the server receives a request for a webpage from a client, the s
 
 Configuration file is a text file that contains various settings and directives that dictate how the web server should operate. These settings can include things like the port number that the web server should listen on, the location of the web server's root directory, and many other settings.
 
-<details>
-<summary>Config format and supported directives.</summary>
+Here is an example fie that shows config file format and supported directives.
 <br>
 
   ```nginx
@@ -126,38 +138,45 @@ server {
     server_name test;                   # specify server_name, need to be added into /etc/hosts to work
     error_page 404 /error/404.html;     # default error page
     client_max_body_size 1024;          # max request body size in bytes
-    root www/;                          # root folder of site directory, full or relative path, mandatory parameter
+    root docs/fusion_web/;              # root folder of site directory, full or relative path, mandatory parameter
     index index.html;                   # default page when requesting a directory, index.html by default
 
-    location / {
-        root server_dir/;               # root folder of the location, if not specified, taken from the server
+    location /tours {                   
+        root docs/fusion_web;           # root folder of the location, if not specified, taken from the server
         autoindex on;                   # turn on/off directory listing
         allow_methods POST GET;         # allowed methods in location, GET only by default
         index index.html;               # default page when requesting a directory, copies root index by default
         return abc/index1.html;         # redirection
-        alias  google.com;              # replaces location part of URI. 
+        alias  docs/fusion_web/tours;   # replaces location part of URI. 
     }
 
     location cgi-bin {
-        root /Users/anastasiianifantova/Desktop/server-main/;    # cgi-bin location, mandatory parameter
-        cgi_path /usr/bin/python3 /bin/bash;                     # address of interpreters installed on the current system, mandatory parameter
+        root ./;                                                 # cgi-bin location, mandatory parameter
+        cgi_path /usr/bin/python3 /bin/bash;                     # location of interpreters installed on the current system, mandatory parameter
         cgi_ext .py .sh;                                         # extensions for executable files, mandatory parameter
     }
 }
   ```
-  
-</details>
 
 <br>
-<br>
+
+## CGI (Common Gateway Interface)
+
+CGI is a standard for running external programs from a web server. When a user requests a web page that should be handled by a CGI program, the web server executes the program and returns the output to the user's web browser.
+
+CGI programs are simply scripts that can be written in any programming language, such as Perl, Python, or bash, and are typically used to process data submitted by a user through a web browser, or to generate dynamic content on a web page.
+
+<p align="center">
+  <img width="60%" height="50%" src="https://i1.ae/img/webserv/CGI.jpg">
+</p>
 
 # Resources
 ## Networking
 - [Create a simple HTTP server in c](https://medium.com/from-the-scratch/http-server-what-do-you-need-to-know-to-build-a-simple-http-server-from-scratch-d1ef8945e4fa)
 - [(Video) Create a simple web server in c](https://www.youtube.com/watch?v=esXw4bdaZkc&ab_channel=JacobSorber)
 - [(Video) explaining select()](https://www.youtube.com/watch?v=Y6pFtgRdUts&ab_channel=JacobSorber)
-- [http://dwise1.net/pgm/sockets/blocking.html](http://dwise1.net/pgm/sockets/blocking.html)
-- [https://w3.cs.jmu.edu/kirkpams/OpenCSF/Books/csf/html/TCPSockets.html](https://w3.cs.jmu.edu/kirkpams/OpenCSF/Books/csf/html/TCPSockets.html)
+- [TCP Socket Programming: HTTP](https://w3.cs.jmu.edu/kirkpams/OpenCSF/Books/csf/html/TCPSockets.html)
+- [All about sockets blocking](http://dwise1.net/pgm/sockets/blocking.html)
 
 ## HTTP
 - [RFC 9110 - HTTP Semantics ](https://www.rfc-editor.org/info/rfc9110)
