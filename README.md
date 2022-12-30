@@ -1,4 +1,4 @@
-# Webserv:  HTTP server in C++ 98
+# Webserv:  HTTP server in C++ 98 
 This project was completed as part of a 42-core curriculum. it was done with [Anastasiia-Ni](https://github.com/Anastasiia-Ni) & [AhmadMHammoudeh](https://github.com/AhmadMHammoudeh)
 
 The goal of the project is to build a C++98-compatible HTTP web server from scratch.
@@ -9,18 +9,27 @@ The web server can handle HTTP GET, HEAD, POST, PUT, and DELETE Requests, and ca
 make
 ./webserv [Config File] ## leave empty to use the default configuration.
 ```
+Configuration File
+CGI (Common Gateway Interface)
 
 # Table of Contents
 
 - [Introduction](#introduction)
-- [Parts of webserver](#parts-of-webserver)
-    - [Server Core](#server-core)
-    - [Request Parser](#request-parser)
-    - [Response Builder](#response-builder)
-    - [Configuration File](#configuration_file)
+- [Parts of a web server](#parts-of-a-web-server)
+  * [Server Core](#server-core)
+  * [Request Parser](#request-parser)
+  * [Response Builder](#response-builder)
+  * [Configuration File](#configuration-file)
+  * [CGI](#cgi)
 - [Resources](#resources)
-    - [Networking](#networking)
-    - [HTTP](#http)
+  * [Networking](#networking)
+  * [HTTP](#http)
+  * [RFC](#rfc)
+  * [CGI](#cgi-1)
+  * [StackOverFlow](#stackoverflow)
+  * [Tools](#tools)
+  * [Other](#other)
+
 
 # Introduction
 
@@ -64,9 +73,21 @@ Content-Length: 1234
 <Message Body>
 ```
 
-The status line consists of three parts: the HTTP version, the status code, and the reason phrase. The status code indicates the result of the request, such as 200 OK (successful) or 404 Not Found (resource not found). The reason phrase is a short description of the status code.
+
+The status line consists of three parts: the HTTP version, the status code, and the reason phrase. The status code indicates the result of the request, such as 200 OK (successful) or 404 Not Found (resource not found). The reason phrase is a short description of the status code. Following is a very brief summary of what a status code denotes:
+
+__1xx__ indicates an informational message only
+
+__2xx__ indicates success of some kind
+
+__3xx__ redirects the client to another URL
+
+__4xx__ indicates an error on the client's part
+
+__5xx__ indicates an error on the server's part
 
 Headers contain additional information about the response, such as the type and size of the content being returned. The message body contains the actual content of the response, such as the HTML code for a webpage.
+
 
 ## HTTP Methods
 |Method|Description|Possible Body|
@@ -160,7 +181,7 @@ server {
 
 <br>
 
-## CGI (Common Gateway Interface)
+## CGI
 
 CGI is a standard for running external programs from a web server. When a user requests a web page that should be handled by a CGI program, the web server executes the program and returns the output to the user's web browser.
 
@@ -177,11 +198,41 @@ CGI programs are simply scripts that can be written in any programming language,
 - [(Video) explaining select()](https://www.youtube.com/watch?v=Y6pFtgRdUts&ab_channel=JacobSorber)
 - [TCP Socket Programming: HTTP](https://w3.cs.jmu.edu/kirkpams/OpenCSF/Books/csf/html/TCPSockets.html)
 - [All about sockets blocking](http://dwise1.net/pgm/sockets/blocking.html)
+- [Beej's Guide to Network Programming](https://beej.us/guide/bgnet/)
 
 ## HTTP
+- [https://developer.mozilla.org/en-US/docs/Web/HTTP](https://developer.mozilla.org/en-US/docs/Web/HTTP)
+- [An Overview of the HTTP as Coverd in RFCs](https://www.inspirisys.com/HTTP_Protocol_as_covered_in_RFCs-An_Overview.pdf)
+- [MIME](https://developer.mozilla.org/en-US/docs/Web/HTTP/Basics_of_HTTP/MIME_types)
+- [HTTP Status Codes](https://umbraco.com/knowledge-base/http-status-codes/)
+- [How the web works: HTTP and CGI explained](https://www.garshol.priv.no/download/text/http-tut.html)
+
+## RFC
+- [How to Read an RFC](https://www.tutorialspoint.com/cplusplus/cpp_web_programming.htm)
 - [RFC 9110 - HTTP Semantics ](https://www.rfc-editor.org/info/rfc9110)
 - [RFC 9112 - HTTP/1.1 ](https://www.rfc-editor.org/info/rfc9112) 
-- [https://developer.mozilla.org/en-US/docs/Web/HTTP](https://developer.mozilla.org/en-US/docs/Web/HTTP)
-- [https://stackoverflow.com/questions/4726515/what-http-response-headers-are-required](https://stackoverflow.com/questions/4726515/what-http-response-headers-are-required)
+- [RFC 2068 - ABNF](https://www.cs.columbia.edu/sip/syntax/rfc2068.html) 
+- [RFC 3986 -  (URI) Generic Syntax](https://www.ietf.org/rfc/rfc3986)
+- [RFC 6265 - HTTP State Management Mechanism (Cookies)](https://www.rfc-editor.org/rfc/rfc6265)
+- [RFC 3875 - CGI](https://datatracker.ietf.org/doc/html/rfc3875)
 
+## CGI
+- [(Video) Creating a file upload page](https://www.youtube.com/watch?v=_j5spdsJdV8&t=562s)
+- [CPP web Programming](https://www.tutorialspoint.com/cplusplus/cpp_web_programming.htm)
+- [Python web Programming](https://www.tutorialspoint.com/python/python_cgi_programming.htm)
 
+## StackOverFlow
+- [What HTTP response headers are required](https://stackoverflow.com/questions/4726515/what-http-response-headers-are-required)
+- [Why do we cast sockaddr_in to sockaddr when calling bind()](https://stackoverflow.com/questions/21099041/why-do-we-cast-sockaddr-in-to-sockaddr-when-calling-bind)
+- [Is an entity body allowed for an HTTP DELETE request?](https://stackoverflow.com/questions/299628/is-an-entity-body-allowed-for-an-http-delete-request)
+- [Sending images over http to browser in C](https://stackoverflow.com/questions/28631767/sending-images-over-http-to-browser-in-c)
+- [Handling whitespaces in http headers](https://stackoverflow.com/questions/31773667/handling-whitespaces-in-http-headers)
+
+## Tools
+- [Postman](https://www.postman.com/downloads/) : Send custom requests to the server
+- [PuTTY](https://www.putty.org/) : Send raw data to the server (Windows Only)
+    - [Video: How to use](https://www.youtube.com/watch?v=ptJYNY7UbQU&ab_channel=GeekThis)
+- [Wireshark]() : Capture request/response traffic
+- [Sige](https://www.linode.com/docs/guides/load-testing-with-siege/) : Load testing 
+## Other
+- [URL Encoding](https://www.urlencoder.io/learn/#:~:text=A%20URL%20is%20composed%20from,%22%20%2C%20%22~%22%20)
