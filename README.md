@@ -166,15 +166,15 @@ server {
 
     location /tours {                   
         root docs/fusion_web;           # root folder of the location, if not specified, taken from the server. 
-                                         EX: - URI /tours           --> docs/fusion_web/tours
-                                             - URI /tours/page.html --> docs/fusion_web/tours/page.html 
+                                        # EX: - URI /tours           --> docs/fusion_web/tours
+                                        #     - URI /tours/page.html --> docs/fusion_web/tours/page.html 
         autoindex on;                   # turn on/off directory listing
         allow_methods POST GET;         # allowed methods in location, GET only by default
         index index.html;               # default page when requesting a directory, copies root index by default
         return abc/index1.html;         # redirection
-        alias  docs/fusion_web/tours/;   # replaces location part of URI. 
-                                         EX: - URI /tours           --> docs/fusion_web/
-                                             - URI /tours/page.html --> docs/fusion_web/page.html 
+        alias  docs/fusion_web/tours/;  # replaces location part of URI. 
+                                        # EX: - URI /tours           --> docs/fusion_web/
+                                        #     - URI /tours/page.html --> docs/fusion_web/page.html 
     }
 
     location cgi-bin {
