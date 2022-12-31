@@ -179,8 +179,8 @@ server {
         allow_methods POST GET;         # allowed methods in location, GET only by default
         index index.html;               # default page when requesting a directory, copies root index by default
         return abc/index1.html;         # redirection
-        alias  docs/fusion_web/tours/;  # replaces location part of URI. 
-                                        # EX: - URI /tours           --> docs/fusion_web/
+        alias  docs/fusion_web;         # replaces location part of URI. 
+                                        # EX: - URI /tours           --> docs/fusion_web
                                         #     - URI /tours/page.html --> docs/fusion_web/page.html 
     }
 
