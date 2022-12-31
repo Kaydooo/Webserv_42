@@ -17,11 +17,11 @@ The web server can handle HTTP GET, HEAD, POST, PUT, and DELETE Requests, and ca
 [Introduction](#introduction)
 
 [Parts of a web server](#parts-of-a-web-server)
-  * [Server Core](#server-core)
-  * [Request Parser](#request-parser)
-  * [Response Builder](#response-builder)
-  * [Configuration File](#configuration-file)
-  * [CGI](#cgi)
+  - [Server Core](#server-core)
+  - [Request Parser](#request-parser)
+  - [Response Builder](#response-builder)
+  - [Configuration File](#configuration-file)
+  - [CGI](#cgi)
   
 [Resources](#resources)
 
@@ -31,8 +31,6 @@ The web server can handle HTTP GET, HEAD, POST, PUT, and DELETE Requests, and ca
 make
 ./webserv [Config File] ## leave empty to use the default configuration.
 ```
-Configuration File
-CGI (Common Gateway Interface)
 
 # Introduction
 
