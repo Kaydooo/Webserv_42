@@ -8,6 +8,7 @@ ServerManager::~ServerManager(){}
  */
 void    ServerManager::setupServers(std::vector<ServerConfig> servers)
 {
+    std::cout << std::endl;
     Logger::logMsg(INFO, CONSOLE_OUTPUT, "Initializing  Servers...");
     _servers = servers;
     char buf[INET_ADDRSTRLEN];
@@ -196,7 +197,8 @@ void    ServerManager::sendResponse(const int &i, Client &c)
     else if (bytes_sent == 0 || (size_t) bytes_sent == response.length())
     {
         // Logger::logMsg(INFO, CONSOLE_OUTPUT, "sendResponse() Done sending ");
-
+        Logger::logMsg(DEBUG, CONSOLE_OUTPUT, "Response Sent To Socket %d, Stats=<%d>"
+        , i, c.response.getCode());
         if (c.request.keepAlive() == false || c.request.errorCode() || c.response.getCgiState())
         {
             Logger::logMsg(INFO, CONSOLE_OUTPUT, "Client %d: Connection Closed.", i);
@@ -265,6 +267,8 @@ void    ServerManager::readRequest(const int &i, Client &c)
     if (c.request.parsingCompleted() || c.request.errorCode()) // 1 = parsing completed and we can work on the response.
     {
         assignServer(c);
+        Logger::logMsg(DEBUG, CONSOLE_OUTPUT, "Request Recived From Socket %d, Method=<%s>  URI=<%s>"
+        , i, c.request.getMethodStr().c_str(), c.request.getPath().c_str());
         c.buildResponse();
         if (c.response.getCgiState())
         {

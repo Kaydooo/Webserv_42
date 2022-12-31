@@ -11,7 +11,8 @@ std::map<LogPrio, std::string> Logger::initMap()
 {
     std::map<LogPrio, std::string> p_map;
 
-    p_map[DEBUG] = "[DEBUG]   ";
+    // p_map[DEBUG] = "[DEBUG]   ";
+    p_map[DEBUG] = "[INFO]    ";
     p_map[INFO] = "[INFO]    ";
     p_map[ERROR] = "[ERROR]   ";
     return p_map;
@@ -46,9 +47,9 @@ void    Logger::logMsg(LogPrio p, Mode m, const char* msg, ...)
         else if (m == CONSOLE_OUTPUT)
         {
             if (p == DEBUG)
-                std::cout << LIGHTMAGENTA;
-            else if (p == INFO)
                 std::cout << CYAN;
+            else if (p == INFO)
+                std::cout << WHITE;
             else if (p == ERROR)
                 std::cout << RED;
             std::cout << getCurrTime() << prio_str[p] << output << RESET << std::endl;
