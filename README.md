@@ -31,8 +31,6 @@ The web server can handle HTTP GET, HEAD, POST, PUT, and DELETE Requests, and ca
 make
 ./webserv [Config File] ## leave empty to use the default configuration.
 ```
-Configuration File
-CGI (Common Gateway Interface)
 
 # Introduction
 
