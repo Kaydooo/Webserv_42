@@ -548,7 +548,7 @@ void	ServerConfig::setupServer(void)
 {
 	if ((_listen_fd = socket(AF_INET, SOCK_STREAM, 0) )  == -1 )
     {
-		Logger::logMsg(ERROR, CONSOLE_OUTPUT, "webserv: socket error %s   Closing ....", strerror(errno));
+		Logger::logMsg(RED, CONSOLE_OUTPUT, "webserv: socket error %s   Closing ....", strerror(errno));
         exit(EXIT_FAILURE);
     }
 
@@ -560,7 +560,7 @@ void	ServerConfig::setupServer(void)
     _server_address.sin_port = htons(_port);
     if (bind(_listen_fd, (struct sockaddr *) &_server_address, sizeof(_server_address)) == -1)
     {
-		Logger::logMsg(ERROR, CONSOLE_OUTPUT, "webserv: bind error %s   Closing ....", strerror(errno));
+		Logger::logMsg(RED, CONSOLE_OUTPUT, "webserv: bind error %s   Closing ....", strerror(errno));
         exit(EXIT_FAILURE);
     }
 }

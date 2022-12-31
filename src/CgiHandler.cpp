@@ -199,14 +199,14 @@ void CgiHandler::execute(short &error_code)
 	}
 	if (pipe(pipe_in) < 0)
 	{
-        Logger::logMsg(ERROR, CONSOLE_OUTPUT, "pipe() failed");
+        Logger::logMsg(RED, CONSOLE_OUTPUT, "pipe() failed");
 
 		error_code = 500;
 		return ;
 	}
 	if (pipe(pipe_out) < 0)
 	{
-        Logger::logMsg(ERROR, CONSOLE_OUTPUT, "pipe() failed");
+        Logger::logMsg(RED, CONSOLE_OUTPUT, "pipe() failed");
 
 		close(pipe_in[0]);
 		close(pipe_in[1]);

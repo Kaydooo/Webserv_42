@@ -3,8 +3,9 @@
 
 std::string Logger::file_name = "logfile.txt";
 LogPrio Logger::prio = ERROR;
-std::map<LogPrio, std::string> Logger::prio_str = initMap();
+L_State Logger::state = ON;
 
+std::map<LogPrio, std::string> Logger::prio_str = initMap();
 
 
 std::map<LogPrio, std::string> Logger::initMap()
@@ -13,21 +14,22 @@ std::map<LogPrio, std::string> Logger::initMap()
 
     // p_map[DEBUG] = "[DEBUG]   ";
     p_map[DEBUG] = "[INFO]    ";
-    p_map[INFO] = "[INFO]    ";
+    p_map[INFO] = "[DEBUG]    ";
     p_map[ERROR] = "[ERROR]   ";
     return p_map;
 }
-void    Logger::logMsg(LogPrio p, Mode m, const char* msg, ...)
+
+void    Logger::logMsg(const char *color, Mode m, const char* msg, ...)
 {
     char        output[8192];
     va_list     args;
     int         n;
 
-    va_start(args, msg);
-    n = vsnprintf(output, 8192, msg, args);
-    std::string date = getCurrTime();
-    if (Logger::prio >= p)
+    if (state == ON)
     {
+        va_start(args, msg);
+        n = vsnprintf(output, 8192, msg, args);
+        std::string date = getCurrTime();
         if (m == FILE_OUTPUT)
         {
             if (mkdir("logs", 0777) < 0 && errno != EEXIST)
@@ -38,7 +40,6 @@ void    Logger::logMsg(LogPrio p, Mode m, const char* msg, ...)
             int fd = open(("logs/" + file_name).c_str(), O_CREAT | O_APPEND | O_WRONLY, S_IRUSR | S_IWUSR);
             std::cout << "fd is " << fd << "And errno is :" << strerror(errno) << std::endl;
             write(fd, date.c_str(), date.length());
-            write(fd, prio_str[p].c_str(), prio_str[p].length());
             write(fd, "   ", 3);
             write(fd, output, n);
             write(fd, "\n", 1);
@@ -46,16 +47,17 @@ void    Logger::logMsg(LogPrio p, Mode m, const char* msg, ...)
         }
         else if (m == CONSOLE_OUTPUT)
         {
-            if (p == DEBUG)
-                std::cout << CYAN;
-            else if (p == INFO)
-                std::cout << WHITE;
-            else if (p == ERROR)
-                std::cout << RED;
-            std::cout << getCurrTime() << prio_str[p] << output << RESET << std::endl;
+            // Not used Currently..
+            // if (p == DEBUG)
+            //     std::cout << LIGHTMAGENTA;
+            // else if (p == INFO)
+            //     std::cout << CYAN;
+            // else if (p == ERROR)
+            //     std::cout << RED;
+            std::cout << getCurrTime() << color << output << RESET << std::endl;
         }      
+        va_end(args);
     }
-    va_end(args);
 }
 
 std::string Logger::getCurrTime()
@@ -78,4 +80,10 @@ void Logger::setFilenName(std::string name)
 {
     Logger::file_name = name;
 }
+
+void Logger::setState(L_State s)
+{
+    Logger::state = s;
+}
+
 
