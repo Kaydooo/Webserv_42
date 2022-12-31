@@ -93,7 +93,7 @@ void    ServerManager::checkTimeout()
     {
         if (time(NULL) - it->second.getLastTime() > CONNECTION_TIMEOUT)
         {
-            Logger::logMsg(LIGHT_BLUE, CONSOLE_OUTPUT, "Client %d Timeout, Closing Connection..", it->first);
+            Logger::logMsg(YELLOW, CONSOLE_OUTPUT, "Client %d Timeout, Closing Connection..", it->first);
             closeConnection(it->first);
             return ;
         }

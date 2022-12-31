@@ -54,7 +54,7 @@ void    Logger::logMsg(const char *color, Mode m, const char* msg, ...)
             //     std::cout << CYAN;
             // else if (p == ERROR)
             //     std::cout << RED;
-            std::cout << getCurrTime() << color << output << RESET << std::endl;
+            std::cout << color << getCurrTime() << output << RESET << std::endl;
         }      
         va_end(args);
     }
