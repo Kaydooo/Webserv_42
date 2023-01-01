@@ -6,8 +6,8 @@
 
 
 /*
-    Takes a string object that contain the whole request message and parse it into 3 Variables
-    _request_line, _request_headers, _response_body. And build the response message.
+    Responsible for building and storing the response. when response is ready, 
+    it will be stored on _response_content and can be used by func getRes().
 */
 class Response
 {
